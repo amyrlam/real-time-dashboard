@@ -3,6 +3,9 @@ import type { Preview } from '@storybook/react-vite'
 import '../src/index.css'
 
 const preview: Preview = {
+  // Every component gets a generated Docs page. The prop tables are built from
+  // the JSDoc on each props interface, so the "why" lives next to the code.
+  tags: ['autodocs'],
   globalTypes: {
     theme: {
       description: 'Design-token theme',
