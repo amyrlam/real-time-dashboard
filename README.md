@@ -265,9 +265,7 @@ executable, so most of this is enforced in CI rather than asserted here.
   `div`-with-`onClick`, so activation, focus, and Enter/Space come from the
   platform rather than from re-implemented handlers.
 - The full tab order, focus rings (both themes), and Enter/Space activation
-  are pinned by tests that run in CI (below). Not covered: keyboard behaviour
-  at narrow widths, and Storybook stories in isolation — both are exercised by
-  hand only.
+  are pinned by tests that run in CI (below).
 
 **Semantics**
 - `aria-sort` on sortable column headers; required `ariaLabel` props on
@@ -277,10 +275,8 @@ executable, so most of this is enforced in CI rather than asserted here.
 - `aria-expanded` on disclosures, via Base UI's `Collapsible`.
 - `<header>`/`<main>` landmarks.
 
-**Known gap:** `Sparkline`'s hover tooltip (exact per-point values) is
-mouse-only. The trend is conveyed to assistive tech by the `role="img"` label,
-but individual points aren't reachable by keyboard. A defensible trade for a
-micro-chart; a full chart would need a data-table equivalent.
+What isn't covered is listed in [Known gaps](#known-gaps) below, in one place
+rather than scattered through this document.
 
 ## Testing, linting, and CI
 
@@ -329,6 +325,44 @@ in render, `setState` in an effect) — these are React Compiler purity hints
 that are real and worth addressing, not noise I've suppressed; they're on the
 list below.
 
+## Known gaps
+
+Everything I know isn't covered, in one place. Three CI layers make it easy to
+imply more rigour than actually exists, so this is the counterweight — the
+list a reviewer would otherwise have to find by poking.
+
+**Accessibility**
+
+| Gap | Detail |
+|---|---|
+| No `prefers-reduced-motion` handling | Two indefinite animations ship: the `FreshnessIndicator` "live" dot pulses continuously, and `Skeleton` pulses while loading. On a page designed to stay open all morning, a permanently pulsing dot is exactly what WCAG 2.2.2 is about. A global `@media (prefers-reduced-motion: reduce)` rule is a few lines and is the first thing I'd fix. |
+| No real screen-reader pass | The keyboard suite reads roles and names from Playwright's accessibility engine, which is a good proxy for *what would be announced* — but nobody has run VoiceOver or NVDA over this. Proxy ≠ the real thing. |
+| `Sparkline` tooltip is mouse-only | Exact per-point values aren't keyboard-reachable. The trend is conveyed by the `role="img"` label. A defensible trade for a micro-chart; a full chart would need a data-table equivalent. |
+| Contrast test is an enumerated list | `tokens.contrast.test.ts` checks the pairings I wrote down, not every pairing that exists. A genuinely new text-on-background combination has to be added to the list — the file says so, but it's a maintenance contract, not automatic discovery. |
+| Keyboard untested at narrow widths | The suite runs one desktop viewport. Responsive behaviour down to ~768px is hand-checked only. |
+| Storybook stories aren't keyboard-tested | Stories get axe (static audit); only the assembled page gets the Tab walk. |
+
+**Testing**
+
+| Gap | Detail |
+|---|---|
+| No visual regression | Nothing here would catch a purely visual break — wrong spacing, a broken layout, a colour that changed but still passes contrast. The largest single hole in the setup. |
+| Primitives have no unit tests | Unit coverage is the feed state machine, the formatters, and the tokens. Component behaviour is verified through Storybook plus the two a11y suites, which is deliberate at this size but wouldn't scale. |
+| E2E is Chromium-only | One browser, one viewport. No Firefox or WebKit. |
+
+**Code quality**
+
+| Gap | Detail |
+|---|---|
+| oxlint purity warnings | `useDashboardFeed` reads refs during render, calls `Date.now()` in render, and sets state in an effect. These are real React Compiler hazards, left visible rather than suppressed. |
+| `DataTable` incompatible-library warning | TanStack Table returns functions React Compiler can't memoize; flagged, not yet addressed. |
+
+**Scale**
+
+| Gap | Detail |
+|---|---|
+| No row virtualization | Fine for 6 queues and 13 agents; a floor of hundreds of agents would need it. |
+
 ## Where AI was used, and how it was verified
 
 Built pair-programming with Claude Code (Claude drafting, me directing scope,
@@ -355,9 +389,10 @@ stack, and product calls). Verification was layered rather than trust-based:
 
 ## If I had more time
 
-- **Address the oxlint purity warnings** in `useDashboardFeed` — refs read
-  during render and `Date.now()` in render are exactly the patterns React
-  Compiler will punish; the hook wants a small restructure.
+Closing the [Known gaps](#known-gaps) comes first — in that order:
+`prefers-reduced-motion`, then visual regression, then the `useDashboardFeed`
+purity warnings. Beyond fixing what's already broken, the things I'd *add*:
+
 - **StyleX exploration**: the semantic-token layer (CSS variables) could be
   ported to StyleX `defineVars` for typed, compiler-enforced tokens — a
   component could constrain exactly which style properties consumers are
@@ -368,10 +403,6 @@ stack, and product calls). Verification was layered rather than trust-based:
   Storybook stack here assumes CSS-variable theming. If time allowed, I'd
   restyle `StatusBadge` on a spike branch (it's clean of ad-hoc className
   passthrough) to make the comparison concrete for a walkthrough.
-- **Keyboard-reachable sparkline values** — the known gap above.
-- Row virtualization in `DataTable` for hundreds-of-agents scale.
 - Queue → agents cross-filtering (click a queue, see its staff).
-- Visual regression snapshots (Chromatic or Playwright screenshots) — the one
-  a11y/UI layer still missing, since none of the three current layers would
-  catch a purely visual regression.
 - Real transport behind `useDashboardFeed` (SSE with backoff), same interface.
+- A denser "wall mode" for the second monitor: larger type, no demo controls.
