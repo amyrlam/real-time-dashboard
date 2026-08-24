@@ -15,6 +15,10 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+# Same rule for Claude Code: local settings and worktrees stay out, but
+# launch.json is shared project config (how to run the app and Storybook).
+.claude/*
+!.claude/launch.json
 .idea
 .DS_Store
 *.suo
