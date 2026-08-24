@@ -1,0 +1,145 @@
+/**
+ * Design tokens — the single source of truth for color, radius, type, and motion.
+ *
+ * Palette is derived from Assembled's brand (assembled.com): warm cream
+ * neutrals, near-black ink #0b1215, deep evergreen #00453d, teal #3dafa3,
+ * and indigo #516be9. Indigo is the interactive/info voice (kept distinct
+ * from the healthy-green status family); dark mode is built from the brand
+ * ink #0b1215 rather than a generic gray.
+ *
+ * Two tiers:
+ *   1. Raw values live here as CSS custom properties, defined per theme
+ *      (`:root` = light, `.dark` = dark). Components never read these names.
+ *   2. `index.css` maps them into Tailwind's `@theme inline` namespace, so
+ *      components only ever use semantic utilities (`bg-surface`, `text-ink-muted`,
+ *      `text-status-breached-text`, …) and stay theme-agnostic for free.
+ *
+ * Status colors are reserved for state (healthy / at-risk / breached / info /
+ * neutral) and are never used as chart-series or decorative colors. Each status
+ * ships four roles:
+ *   -accent  : the mark color (dots, sparkline strokes, bars)
+ *   -text    : contrast-safe text on the page/surface background
+ *   -surface : a subtle tinted fill (badge/chip/row backgrounds)
+ *   -border  : a border that reads against the tinted fill
+ * Status meaning is never carried by color alone — StatusBadge always pairs the
+ * color with a label (and a dot shape), per accessibility guidance.
+ *
+ * Hex vs. rgba is a deliberate choice, not inconsistency:
+ *   - hex   : a fixed, exact color regardless of what's behind it — every
+ *             `-accent`/`-text` token, and light mode's `-surface`/`-border`
+ *             tints. Light mode's three elevations (page/surface/sunken) sit
+ *             close enough in lightness that one hand-picked flat tint reads
+ *             correctly against any of them.
+ *   - rgba  : a translucent overlay that composites onto *whatever's
+ *             underneath* — `-bg-hover`, the shadows, and dark mode's
+ *             `-surface`/`-border` tints. Dark mode's elevations are far
+ *             apart in lightness (page/surface/sunken), so a flat hex tuned
+ *             for one would look wrong on another; an alpha tint scales
+ *             correctly across all of them and avoids the muddy look flat
+ *             saturated fills get on a near-black ground.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Neutrals — Assembled's warm cream family */
+  --t-bg-page: #f1f0ee;
+  --t-bg-surface: #fbfaf8;
+  --t-bg-sunken: #eceae7;
+  --t-bg-hover: rgba(11, 18, 21, 0.045);
+  --t-border: #e1dfd9;
+  --t-border-strong: #c6c3ba;
+  --t-ink: #0b1215;
+  --t-ink-secondary: #4a4e55;
+  --t-ink-muted: #6c6a63;
+  --t-gridline: #e7e5df;
+
+  /* Accent (interactive, links, focus) — brand indigo */
+  --t-accent: #516be9;
+  --t-accent-text: #3b52c8;
+  --t-focus-ring: #516be9;
+
+  /* Status: healthy — brand evergreen family */
+  --t-healthy-accent: #0e9d71;
+  --t-healthy-text: #0c6149;
+  --t-healthy-surface: #e5f1ea;
+  --t-healthy-border: #b9dcc9;
+
+  /* Status: at-risk — warm amber */
+  --t-risk-accent: #b87c00;
+  --t-risk-text: #8a5c00;
+  --t-risk-surface: #f9efd6;
+  --t-risk-border: #ead2a0;
+
+  /* Status: breached — warm red */
+  --t-breach-accent: #d0453a;
+  --t-breach-text: #b02f24;
+  --t-breach-surface: #f9e8e5;
+  --t-breach-border: #eec2bb;
+
+  /* Status: info — brand indigo */
+  --t-info-accent: #516be9;
+  --t-info-text: #3b52c8;
+  --t-info-surface: #eaedfb;
+  --t-info-border: #c5cdf3;
+
+  /* Status: neutral (offline / unknown / paused) */
+  --t-neutral-accent: #84827b;
+  --t-neutral-text: #4a4e55;
+  --t-neutral-surface: #eceae7;
+  --t-neutral-border: #d5d2ca;
+
+  /* Elevation */
+  --t-shadow-raised: 0 1px 2px rgba(11, 18, 21, 0.05);
+  --t-shadow-overlay:
+    0 4px 12px rgba(11, 18, 21, 0.12), 0 1px 3px rgba(11, 18, 21, 0.08);
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Brand ink #0b1215 as the dark ground — green-cast, not generic gray */
+  --t-bg-page: #0b1215;
+  --t-bg-surface: #131c1f;
+  --t-bg-sunken: #070d0f;
+  --t-bg-hover: rgba(255, 255, 255, 0.055);
+  --t-border: #24302f;
+  --t-border-strong: #3e4c4a;
+  --t-ink: #f0efe9;
+  --t-ink-secondary: #bcc3bd;
+  --t-ink-muted: #8d958f;
+  --t-gridline: #1c2625;
+
+  --t-accent: #7d92f2;
+  --t-accent-text: #a2b1f6;
+  --t-focus-ring: #7d92f2;
+
+  --t-healthy-accent: #2fbd8b;
+  --t-healthy-text: #57cfa2;
+  --t-healthy-surface: rgba(47, 189, 139, 0.13);
+  --t-healthy-border: rgba(47, 189, 139, 0.38);
+
+  --t-risk-accent: #eeae1e;
+  --t-risk-text: #e9b545;
+  --t-risk-surface: rgba(238, 174, 30, 0.11);
+  --t-risk-border: rgba(238, 174, 30, 0.35);
+
+  --t-breach-accent: #e05a4c;
+  --t-breach-text: #ef8378;
+  --t-breach-surface: rgba(224, 90, 76, 0.14);
+  --t-breach-border: rgba(224, 90, 76, 0.42);
+
+  --t-info-accent: #7d92f2;
+  --t-info-text: #a2b1f6;
+  --t-info-surface: rgba(125, 146, 242, 0.14);
+  --t-info-border: rgba(125, 146, 242, 0.4);
+
+  --t-neutral-accent: #838b85;
+  --t-neutral-text: #bcc3bd;
+  --t-neutral-surface: rgba(255, 255, 255, 0.06);
+  --t-neutral-border: rgba(255, 255, 255, 0.16);
+
+  --t-shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --t-shadow-overlay:
+    0 4px 14px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
