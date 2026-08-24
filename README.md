@@ -129,8 +129,9 @@ plus Storybook as visual verification for every component state. One test is a
 regression: the hook must tolerate a `fixture` prop constructed inline on
 every render (see below).
 
-**WCAG AA is enforced by CI, not just eyeballed**, in two layers
-([.github/workflows/ci.yml](.github/workflows/ci.yml)):
+**Accessibility is enforced by CI, not just eyeballed**, in three layers
+([.github/workflows/ci.yml](.github/workflows/ci.yml)). Each one catches a
+class the others structurally can't:
 
 - `src/tokens/tokens.contrast.test.ts` parses `tokens.css` directly (so it
   can't drift from the real values) and asserts ≥4.5:1 contrast for every
@@ -143,6 +144,20 @@ every render (see below).
   against every story in headless Chromium — the rendering-level complement
   to the token math above (catches opacity, stacking, missing labels; things
   contrast arithmetic alone can't).
+- `pnpm test:e2e` ([e2e/keyboard-nav.spec.ts](e2e/keyboard-nav.spec.ts)) walks
+  the built app with actual Tab presses and pins the **entire tab order** —
+  role and accessible name per stop, read from Playwright's accessibility
+  engine — plus a focus ring on every stop and Enter/Space activation on the
+  sortable headers and roster disclosure.
+
+  That third layer exists because the first two missed a real bug. Recharts
+  defaults `accessibilityLayer` on, which put `tabIndex=0 role="application"`
+  on every sparkline SVG: six extra unnamed tab stops per page, nested inside
+  the component's own `role="img"`. Valid markup, no contrast implication, no
+  axe rule — invisible to both other layers, and obvious the moment you press
+  Tab. The fix is in [`Sparkline.tsx`](src/components/ui/Sparkline.tsx); the
+  test was verified by reverting that fix and watching it fail, rather than
+  assuming it would.
 
 ## Where AI was used, and how it was verified
 

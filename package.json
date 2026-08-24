@@ -15,7 +15,8 @@
     "build-storybook": "storybook build",
     "serve-storybook": "http-server storybook-static --port 6006 --silent",
     "test-storybook": "test-storybook --url http://localhost:6006",
-    "test-storybook:ci": "start-server-and-test serve-storybook http://localhost:6006 test-storybook"
+    "test-storybook:ci": "start-server-and-test serve-storybook http://localhost:6006 test-storybook",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@base-ui-components/react": "1.0.0-rc.0",
@@ -28,6 +29,7 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@storybook/addon-docs": "^10.5.10",
     "@storybook/react-vite": "^10.5.10",
     "@storybook/test-runner": "^0.24.4",
