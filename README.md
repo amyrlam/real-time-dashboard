@@ -4,14 +4,13 @@ A real-time contact-center dashboard — the page an operations manager keeps on
 second monitor all morning — built as a small design system underneath a single
 page. Take-home for Assembled.
 
-- [The brief](https://assembledhq.notion.site/Take-home-interview-Real-time-dashboard-391d57062bc080e690a1ebcf49e7c7de)
-  — the source of truth for requirements.
-This README is the single source of truth for the project — what's here, why,
-and what isn't. (An earlier `docs/PLAN.md` held the pre-build plan; its
-durable parts are folded in below and the rest is in git history, rather than
-kept as a second document to drift out of date.)
-- [docs/previews.md](docs/previews.md) — every PR deploys the dashboard **and**
-  Storybook as separate Vercel previews.
+[The brief](https://assembledhq.notion.site/Take-home-interview-Real-time-dashboard-391d57062bc080e690a1ebcf49e7c7de)
+is the source of truth for requirements. This README is the source of truth
+for everything else — what's here, why, and what isn't.
+
+There are deliberately no other docs. A `docs/PLAN.md` (the pre-build plan) and
+a `docs/previews.md` (one-time Vercel setup) both existed; their durable parts
+are folded in below and the rest is in git history. Second documents only drift.
 
 ---
 
@@ -122,8 +121,13 @@ are what made it a five-minute change instead of a leap of faith.
 - **GitHub Actions** ([.github/workflows/ci.yml](.github/workflows/ci.yml)) — three
   parallel jobs on every PR: *Lint, test, build* · *Storybook accessibility (axe)* ·
   *Keyboard navigation (Playwright)*.
-- **Vercel** — two projects (dashboard + Storybook), branch previews per PR.
-  See [docs/previews.md](docs/previews.md).
+- **Vercel** — the repo is imported as *two* projects: the dashboard
+  (`pnpm build` → `dist`) and the Storybook catalog (`pnpm build-storybook` →
+  `storybook-static`). Every PR therefore gets both preview URLs, so a
+  reviewer can open the running page and the component catalog without
+  cloning. Settings live in Vercel rather than a `vercel.json`, deliberately:
+  a single root config would apply to both projects, and they need different
+  build commands.
 
 > The brief puts "production deployment, CI/CD, infra-as-code" out of scope, and
 > I've held to that line: there's no deploy pipeline, no environments, no
@@ -150,9 +154,8 @@ src/
     useDashboardFeed.ts    # the whole "live data" lifecycle
   components/ui/           # the reusable primitives — the graded artifact
   features/dashboard/      # page-level composition; deliberately thin
-e2e/keyboard-nav.spec.ts   # tab order, focus rings, keyboard activation
+e2e/keyboard-nav.spec.ts   # tab order, focus rings, activation, reduced motion
 .storybook/                # config + test-runner (axe) setup
-docs/                      # plan, preview setup
 ```
 
 The `components/ui` ↔ `features/dashboard` split is the important one:
