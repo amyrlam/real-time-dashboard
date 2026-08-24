@@ -57,7 +57,7 @@ different scale, the note says so.
 | | Version | Why this |
 |---|---|---|
 | **Tailwind CSS** | v4 | CSS-first config: tokens are mapped in `src/index.css` under `@theme inline`, so components use semantic utilities (`bg-surface`) and never raw palette values. No `tailwind.config.js`. |
-| **Base UI** | 1.0.0-rc.0 | Headless behavior + accessibility semantics, styled entirely by our tokens — the shadcn-style split. Currently used for `Collapsible` (the roster disclosure). See the note below on why Base UI over Radix, and on the version. |
+| **Base UI** | 1.7.0 | Headless behavior + accessibility semantics, styled entirely by our tokens — the shadcn-style split. Currently used for `Collapsible` (the roster disclosure). See the note below on why Base UI over Radix. |
 | **clsx** | 2 | Behind `src/lib/cn.ts`. |
 
 **Why Base UI rather than Radix.** Radix is the more familiar name, but Base UI
@@ -72,11 +72,12 @@ you least want quietly rotting — the maintained lineage mattered more than the
 familiar name. (shadcn/ui now offers Base UI alongside Radix for the same
 reason.)
 
-**On the version:** this repo is on `1.0.0-rc.0` of the pre-rename package
-`@base-ui-components/react`. Base UI shipped a stable **1.0.0** in December
-2025 under the new name `@base-ui/react`. Upgrading is a rename plus a version
-bump across a single component (`Collapsible`), and is the first thing I'd do
-on this repo after the walkthrough.
+**On the version:** the build originally sat on `1.0.0-rc.0` of the pre-rename
+package `@base-ui-components/react`. Base UI has since shipped stable, so this
+is now on **1.7.0** of `@base-ui/react` — worth doing rather than demoing a
+release candidate of a package that no longer exists under that name. The
+upgrade touched one import line; the three CI layers plus the keyboard suite
+are what made it a five-minute change instead of a leap of faith.
 
 ### Data display
 
@@ -153,6 +154,18 @@ intervene?" — so the page is ordered by intervention priority:
    against target, the wait *trend* with the SLA target drawn as a threshold
    line (a number tells you where you are; the sparkline tells you where you're
    headed), tickets waiting, staffing, and volume vs forecast.
+
+   **Lateness is shown in seconds, not percent** — a deliberate departure from
+   the fixture, which pre-computes `sla_headroom_pct` for you. At 14:45 Billing
+   is `+46%` over its target and Live Chat `+44%`: near-identical numbers that
+   suggest Billing is the worse problem. In real terms Billing's oldest ticket
+   is **55s** past its promise and Live Chat's is **1m 20s** — Live Chat is
+   clearly worse. The percentages mislead because each is a percentage of a
+   *different* deadline (46% of 2 minutes vs 44% of 3). An ops manager
+   deciding where to move an agent acts on minutes a customer has been left
+   waiting, so the table shows "1m 20s over target" and keeps the percentage
+   out of it. The brief explicitly allows this: the pre-computed fields are
+   "a suggestion, not a constraint".
 3. **Agents needing attention** — deliberately *not* a 13-row roster. Agent
    states are activities, not judgments: an agent on break may be exactly on
    schedule. **Adherence** carries the alarm, so only out-of-adherence agents

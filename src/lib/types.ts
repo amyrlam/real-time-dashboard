@@ -24,7 +24,13 @@ export interface QueueSnapshot {
   sla_status: SlaStatus
   sla_target_sec: number
   longest_wait_sec: number
-  /** Percent over (+) or under (−) the SLA target. */
+  /**
+   * Percent over (+) or under (−) the SLA target. Present in the fixture but
+   * deliberately unrendered: the UI shows absolute time over target instead,
+   * because a percentage hides the size of the target it's a percentage of
+   * (Billing at +46% is 55s late; Live Chat at +44% is 80s late — the smaller
+   * percentage is the worse queue). See "Queues, worst first" in the README.
+   */
   sla_headroom_pct: number
   tickets_waiting: number
   agents_available: number

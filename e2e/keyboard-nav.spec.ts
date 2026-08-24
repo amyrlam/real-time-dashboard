@@ -142,6 +142,12 @@ test('the roster disclosure is operable by keyboard and reports its state', asyn
   const collapsed = page.getByRole('button', { name: 'Show all' })
   await expect(collapsed).toHaveAttribute('aria-expanded', 'false')
 
+  // Assert the panel's *content*, not just the trigger's aria-expanded —
+  // aria-expanded lives on the trigger, so it would keep flipping happily
+  // even if the panel stopped rendering entirely.
+  const roster = page.getByRole('listitem')
+  await expect(roster).toHaveCount(0)
+
   await collapsed.focus()
   await page.keyboard.press('Enter')
 
@@ -149,6 +155,7 @@ test('the roster disclosure is operable by keyboard and reports its state', asyn
     'aria-expanded',
     'true',
   )
+  await expect(roster.first()).toBeVisible()
 
   // ...and closes again with Space, the other native activation key.
   await page.keyboard.press(' ')
@@ -156,6 +163,7 @@ test('the roster disclosure is operable by keyboard and reports its state', asyn
     'aria-expanded',
     'false',
   )
+  await expect(roster).toHaveCount(0)
 })
 
 test('column headers sort by keyboard and expose sort state', async ({

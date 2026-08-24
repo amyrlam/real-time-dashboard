@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Collapsible } from '@base-ui-components/react/collapsible'
+import { Collapsible } from '@base-ui/react/collapsible'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/DataTable'
 import { Duration } from '../../components/ui/Duration'
