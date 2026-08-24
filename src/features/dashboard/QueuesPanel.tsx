@@ -64,9 +64,7 @@ export function QueuesPanel({ queues, loading }: QueuesPanelProps) {
               <Duration
                 seconds={q.longest_wait_sec}
                 variant="clock"
-                className={
-                  over > 0 ? 'font-semibold text-breach-text' : 'text-ink'
-                }
+                intent={over > 0 ? 'breach' : undefined}
               />
               <span className="text-2xs text-ink-muted">
                 {over > 0
