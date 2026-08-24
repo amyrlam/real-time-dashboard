@@ -75,6 +75,9 @@ importers:
       oxlint:
         specifier: ^1.75.0
         version: 1.79.0
+      playwright:
+        specifier: ^1.62.1
+        version: 1.62.1
       start-server-and-test:
         specifier: ^3.0.12
         version: 3.0.12(supports-color@8.1.1)
