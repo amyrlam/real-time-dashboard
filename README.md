@@ -82,9 +82,16 @@ API principles, applied consistently:
 
 ## Tokens and theming
 
-`src/tokens/tokens.css` is the single source of truth: warm-neutral surfaces
-and inks, plus five status families, each with four roles (`accent` mark,
-contrast-safe `text`, tinted `surface`, `border`). Light and dark are the same
+`src/tokens/tokens.css` is the single source of truth. The palette is derived
+from Assembled's own brand (assembled.com): warm cream neutrals and the
+near-black ink `#0b1215`, the evergreen family for "healthy", brand indigo
+`#516be9` as the interactive/info voice (deliberately a different hue from the
+healthy green, so actions never impersonate status), and a dark mode built
+from the brand ink itself rather than a generic gray. Five status families
+each ship four roles (`accent` mark, contrast-safe `text`, tinted `surface`,
+`border`); every text token was contrast-checked programmatically (≥4.5:1 on
+its surface, marks ≥3:1) rather than eyeballed. Rebranding the entire app —
+both themes — was a one-file change, which is the point of the token layer. Light and dark are the same
 token names redefined under `.dark`; `index.css` maps them into Tailwind v4's
 `@theme inline`, so components only ever use semantic utilities
 (`bg-surface`, `text-breach-text`) and are theme-agnostic for free. Storybook
