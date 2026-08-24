@@ -169,6 +169,36 @@ const TEXT_PAIRS: Pair[] = [
     bg: `${intent}-surface`,
     min: TEXT_MIN,
   })),
+  // Intent-colored *text on an untinted background* — Delta anywhere, and
+  // Duration's `intent` in AgentsPanel's "Off plan for" column. Distinct from
+  // the badge case above: there the text sits on its own matching tint, here
+  // it sits on bare page/surface with no tint to lift it.
+  ...INTENTS.flatMap((intent) => [
+    {
+      label: `${intent}-text on surface (Delta, Duration intent)`,
+      fg: `--t-${intent}-text`,
+      bg: 'surface',
+      min: TEXT_MIN,
+    },
+    {
+      label: `${intent}-text on page (Delta in a StatCard)`,
+      fg: `--t-${intent}-text`,
+      bg: 'page',
+      min: TEXT_MIN,
+    },
+  ]),
+  // Intent-colored text on a *differently*-tinted row wash. Real case: a
+  // breached queue whose volume is under forecast renders a healthy-green
+  // Delta on the breach-red row wash. Every combination is checked
+  // because DataTable's rowIntent can tint a row any intent.
+  ...INTENTS.flatMap((rowIntent) =>
+    INTENTS.map((textIntent) => ({
+      label: `${textIntent}-text on ${rowIntent}-tinted row wash`,
+      fg: `--t-${textIntent}-text`,
+      bg: `${rowIntent}-surface`,
+      min: TEXT_MIN,
+    })),
+  ),
   // ink-muted also shows up as secondary labels inside DataTable rows that
   // DataTable's `rowIntent` can tint by any intent (today only 'breach' is
   // used, in QueuesPanel) — checked against every intent so a future
