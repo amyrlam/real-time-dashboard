@@ -79,4 +79,24 @@
     outline: 2px solid var(--t-focus-ring);
     outline-offset: 2px;
   }
+
+  /*
+   * Honour the OS "reduce motion" setting. This page is designed to sit open
+   * on a second monitor all morning, and the FreshnessIndicator's "live" dot
+   * pulses indefinitely — motion that starts automatically and never stops is
+   * exactly what WCAG 2.2.2 (Pause, Stop, Hide, Level A) is about. Nothing
+   * here conveys meaning through motion alone: the live dot is paired with
+   * the word "Live", and skeletons still read as placeholders when static,
+   * so suppressing animation costs no information.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

@@ -6,9 +6,10 @@ page. Take-home for Assembled.
 
 - [The brief](https://assembledhq.notion.site/Take-home-interview-Real-time-dashboard-391d57062bc080e690a1ebcf49e7c7de)
   — the source of truth for requirements.
-- [docs/PLAN.md](docs/PLAN.md) — the planning doc drafted before/during the
-  build (scope, decisions, architecture, build order), kept for process
-  transparency alongside "Where AI was used" below.
+This README is the single source of truth for the project — what's here, why,
+and what isn't. (An earlier `docs/PLAN.md` held the pre-build plan; its
+durable parts are folded in below and the rest is in git history, rather than
+kept as a second document to drift out of date.)
 - [docs/previews.md](docs/previews.md) — every PR deploys the dashboard **and**
   Storybook as separate Vercel previews.
 
@@ -30,7 +31,25 @@ page. Take-home for Assembled.
 | `pnpm test-storybook:ci` | Serves `storybook-static/` and runs axe over every story (run `build-storybook` first) |
 | `pnpm test:e2e` | Playwright keyboard-navigation suite (builds + serves the app itself) |
 
-The page replays the sample feed (`src/data/dashboard_state.json`) on a timer to
+## The sample data
+
+`src/data/dashboard_state.json` is the fixture from the brief, unmodified
+(95.5 KiB): a `current` snapshot at 14:45 plus 10 history frames at 5-minute
+intervals from 14:00.
+
+It carries a deliberate arc, which is worth letting run rather than
+screenshotting: calm floor until 14:10, escalation through 14:25, peak trouble
+at 14:30–14:35 (3 queues breaching), then partial recovery. The "worst first"
+sort visibly reorders itself as it goes.
+
+> **One discrepancy.** The brief's prose says "two agents are currently out of
+> adherence", but the `current` snapshot has **three** (Alex T., Jordan P.,
+> Omar B.) and **two** breached queues (Billing and Live Chat, VIP at risk).
+> The file is internally consistent — `summary.agents_out_of_adherence` is 3
+> and three agents carry the status — so the data is right and the prose is
+> stale. The UI is built from the data.
+
+The page replays that feed on a timer to
 simulate live ticks. The **Demo controls** panel (bottom right) exists so every
 feed state is reachable during a walkthrough: scrub the replay, pause until the
 data goes stale, drop the connection to see the error path, reload to see the
@@ -267,6 +286,13 @@ executable, so most of this is enforced in CI rather than asserted here.
 - The full tab order, focus rings (both themes), and Enter/Space activation
   are pinned by tests that run in CI (below).
 
+**Motion**
+- A global `prefers-reduced-motion` guard in `src/index.css`. This page is
+  meant to stay open all morning and the "live" dot pulses indefinitely —
+  motion that starts on its own and never stops is what WCAG 2.2.2 (Level A)
+  addresses. Nothing conveys meaning through motion alone, so suppressing it
+  costs no information. Asserted by a test, not just declared.
+
 **Semantics**
 - `aria-sort` on sortable column headers; required `ariaLabel` props on
   `DataTable` and `Sparkline` (the type system won't let you ship an unlabeled
@@ -301,14 +327,16 @@ others structurally can't:
    opacity, stacking, missing labels.
 3. **Keyboard navigation** — `pnpm test:e2e`
    ([e2e/keyboard-nav.spec.ts](e2e/keyboard-nav.spec.ts)) walks the built app
-   with real Tab presses. Six tests pin: the **entire tab order** (role +
+   with real Tab presses. Seven tests pin: the **entire tab order** (role +
    accessible name per stop, read from Playwright's accessibility engine —
    roughly what a screen reader announces); an accessible name on every stop;
    a visible focus ring on every stop, **in both light and dark** (the ring is
    a themed token, so asserting one theme would leave half the claim
    unguarded); and Enter/Space activation with correct `aria-expanded` /
    `aria-sort`, including that the disclosure's panel content actually appears
-   and not merely that its trigger's `aria-expanded` flipped.
+   and not merely that its trigger's `aria-expanded` flipped; and that the
+   `prefers-reduced-motion` guard actually suppresses the indefinite
+   animations.
 
    Layer 3 exists because layers 1 and 2 both missed a real bug. Recharts
    defaults `accessibilityLayer` on, which put `tabIndex=0 role="application"`
@@ -335,7 +363,6 @@ list a reviewer would otherwise have to find by poking.
 
 | Gap | Detail |
 |---|---|
-| No `prefers-reduced-motion` handling | Two indefinite animations ship: the `FreshnessIndicator` "live" dot pulses continuously, and `Skeleton` pulses while loading. On a page designed to stay open all morning, a permanently pulsing dot is exactly what WCAG 2.2.2 is about. A global `@media (prefers-reduced-motion: reduce)` rule is a few lines and is the first thing I'd fix. |
 | No real screen-reader pass | The keyboard suite reads roles and names from Playwright's accessibility engine, which is a good proxy for *what would be announced* — but nobody has run VoiceOver or NVDA over this. Proxy ≠ the real thing. |
 | `Sparkline` tooltip is mouse-only | Exact per-point values aren't keyboard-reachable. The trend is conveyed by the `role="img"` label. A defensible trade for a micro-chart; a full chart would need a data-table equivalent. |
 | Contrast test is an enumerated list | `tokens.contrast.test.ts` checks the pairings I wrote down, not every pairing that exists. A genuinely new text-on-background combination has to be added to the list — the file says so, but it's a maintenance contract, not automatic discovery. |
@@ -366,7 +393,10 @@ list a reviewer would otherwise have to find by poking.
 ## Where AI was used, and how it was verified
 
 Built pair-programming with Claude Code (Claude drafting, me directing scope,
-stack, and product calls). Verification was layered rather than trust-based:
+stack, and product calls). The build started from a written plan — stack
+decisions, component inventory, build order — agreed before any code, so the
+scope calls were made deliberately rather than discovered halfway through;
+that plan is in git history. Verification was layered rather than trust-based:
 
 - **Types + tests first**: strict TS on everything; the feed hook and
   formatters got tests before the page used them.

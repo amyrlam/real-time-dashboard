@@ -166,6 +166,30 @@ test('the roster disclosure is operable by keyboard and reports its state', asyn
   await expect(roster).toHaveCount(0)
 })
 
+test.describe('reduced motion', () => {
+  // WCAG 2.2.2: the "live" dot pulses indefinitely on a page meant to stay
+  // open all morning, so the OS preference has to actually suppress it.
+  // In this Playwright version reducedMotion lives under contextOptions
+  // rather than being a top-level `use` key like colorScheme.
+  test.use({ contextOptions: { reducedMotion: 'reduce' } })
+
+  test('indefinite animations are suppressed', async ({ page }) => {
+    const animated = page.locator('.animate-pulse')
+    const count = await animated.count()
+    // Guard against the assertion passing because nothing was animated at all.
+    expect(count, 'expected the live dot to be present').toBeGreaterThan(0)
+
+    for (let i = 0; i < count; i++) {
+      const duration = await animated
+        .nth(i)
+        .evaluate((el) => getComputedStyle(el).animationDuration)
+      // The reduce rule collapses duration to 0.01ms; anything longer means a
+      // new animation slipped past the guard in index.css.
+      expect(parseFloat(duration)).toBeLessThan(0.05)
+    }
+  })
+})
+
 test.describe('dark theme', () => {
   // The focus ring is a themed token (--t-focus-ring), so it's a different
   // colour in dark mode. Asserting the ring only in light mode would leave
