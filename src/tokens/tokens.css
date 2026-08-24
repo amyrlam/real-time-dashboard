@@ -1,0 +1,124 @@
+/**
+ * Design tokens — the single source of truth for color, radius, type, and motion.
+ *
+ * Two tiers:
+ *   1. Raw values live here as CSS custom properties, defined per theme
+ *      (`:root` = light, `.dark` = dark). Components never read these names.
+ *   2. `index.css` maps them into Tailwind's `@theme inline` namespace, so
+ *      components only ever use semantic utilities (`bg-surface`, `text-ink-muted`,
+ *      `text-status-breached-text`, …) and stay theme-agnostic for free.
+ *
+ * Status colors are reserved for state (healthy / at-risk / breached / info /
+ * neutral) and are never used as chart-series or decorative colors. Each status
+ * ships four roles:
+ *   -accent  : the mark color (dots, sparkline strokes, bars)
+ *   -text    : contrast-safe text on the page/surface background
+ *   -surface : a subtle tinted fill (badge/chip/row backgrounds)
+ *   -border  : a border that reads against the tinted fill
+ * Status meaning is never carried by color alone — StatusBadge always pairs the
+ * color with a label (and a dot shape), per accessibility guidance.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Neutrals — slightly warm gray family */
+  --t-bg-page: #f7f7f5;
+  --t-bg-surface: #fcfcfb;
+  --t-bg-sunken: #f1f0ed;
+  --t-bg-hover: rgba(11, 11, 11, 0.04);
+  --t-border: #e4e3dd;
+  --t-border-strong: #c9c8c0;
+  --t-ink: #171716;
+  --t-ink-secondary: #52514e;
+  --t-ink-muted: #898781;
+  --t-gridline: #e8e7e1;
+
+  /* Accent (interactive, links, focus) */
+  --t-accent: #2a78d6;
+  --t-accent-text: #1c5cab;
+  --t-focus-ring: #2a78d6;
+
+  /* Status: healthy */
+  --t-healthy-accent: #0ca30c;
+  --t-healthy-text: #12691a;
+  --t-healthy-surface: #eaf5e9;
+  --t-healthy-border: #bcdcba;
+
+  /* Status: at-risk */
+  --t-risk-accent: #c98500;
+  --t-risk-text: #8a5a00;
+  --t-risk-surface: #fdf3da;
+  --t-risk-border: #ecd394;
+
+  /* Status: breached */
+  --t-breach-accent: #d03b3b;
+  --t-breach-text: #b02a2a;
+  --t-breach-surface: #fbeaea;
+  --t-breach-border: #efbcbc;
+
+  /* Status: info */
+  --t-info-accent: #2a78d6;
+  --t-info-text: #1c5cab;
+  --t-info-surface: #e9f1fb;
+  --t-info-border: #bcd6f2;
+
+  /* Status: neutral (offline / unknown / paused) */
+  --t-neutral-accent: #898781;
+  --t-neutral-text: #52514e;
+  --t-neutral-surface: #f1f0ed;
+  --t-neutral-border: #d6d5cf;
+
+  /* Elevation */
+  --t-shadow-raised: 0 1px 2px rgba(11, 11, 11, 0.05);
+  --t-shadow-overlay:
+    0 4px 12px rgba(11, 11, 11, 0.12), 0 1px 3px rgba(11, 11, 11, 0.08);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --t-bg-page: #111110;
+  --t-bg-surface: #1a1a19;
+  --t-bg-sunken: #0d0d0c;
+  --t-bg-hover: rgba(255, 255, 255, 0.055);
+  --t-border: #2c2c2a;
+  --t-border-strong: #45443f;
+  --t-ink: #f2f1ed;
+  --t-ink-secondary: #c3c2b7;
+  --t-ink-muted: #8b897f;
+  --t-gridline: #262624;
+
+  --t-accent: #3987e5;
+  --t-accent-text: #74abec;
+  --t-focus-ring: #3987e5;
+
+  --t-healthy-accent: #23b323;
+  --t-healthy-text: #55c85c;
+  --t-healthy-surface: rgba(20, 168, 20, 0.13);
+  --t-healthy-border: rgba(38, 180, 38, 0.38);
+
+  --t-risk-accent: #fab219;
+  --t-risk-text: #f3b83c;
+  --t-risk-surface: rgba(250, 178, 25, 0.11);
+  --t-risk-border: rgba(250, 178, 25, 0.35);
+
+  --t-breach-accent: #e05252;
+  --t-breach-text: #ef7b74;
+  --t-breach-surface: rgba(224, 82, 82, 0.14);
+  --t-breach-border: rgba(224, 82, 82, 0.42);
+
+  --t-info-accent: #3987e5;
+  --t-info-text: #74abec;
+  --t-info-surface: rgba(57, 135, 229, 0.13);
+  --t-info-border: rgba(57, 135, 229, 0.4);
+
+  --t-neutral-accent: #8b897f;
+  --t-neutral-text: #c3c2b7;
+  --t-neutral-surface: rgba(255, 255, 255, 0.06);
+  --t-neutral-border: rgba(255, 255, 255, 0.16);
+
+  --t-shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --t-shadow-overlay:
+    0 4px 14px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
