@@ -12,6 +12,11 @@ export interface DeltaChipProps {
   positiveIsGood?: boolean
   /** Render the value; defaults to a signed percent ("+25%"). */
   format?: (value: number) => string
+  /**
+   * Deviations with |value| below this render in neutral ink — small moves
+   * shouldn't shout on a dense page. Default 0 (color every move).
+   */
+  quietBand?: number
   /** Screen-reader context, e.g. "vs forecast". Appended after the value. */
   srLabel?: string
   className?: string
@@ -26,12 +31,14 @@ export function DeltaChip({
   value,
   positiveIsGood = true,
   format = formatSignedPct,
+  quietBand = 0,
   srLabel,
   className,
 }: DeltaChipProps) {
   const rounded = Math.round(value)
   const direction = rounded === 0 ? 'flat' : rounded > 0 ? 'up' : 'down'
-  const good = direction === 'flat' ? null : (rounded > 0) === positiveIsGood
+  const quiet = direction === 'flat' || Math.abs(rounded) < quietBand
+  const good = quiet ? null : (rounded > 0) === positiveIsGood
   const intent: Intent =
     good === null ? 'neutral' : good ? 'healthy' : 'breach'
 
