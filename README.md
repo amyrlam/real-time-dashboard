@@ -90,7 +90,12 @@ healthy green, so actions never impersonate status), and a dark mode built
 from the brand ink itself rather than a generic gray. Five status families
 each ship four roles (`accent` mark, contrast-safe `text`, tinted `surface`,
 `border`); every text token was contrast-checked programmatically (≥4.5:1 on
-its surface, marks ≥3:1) rather than eyeballed. Rebranding the entire app —
+its surface, marks ≥3:1) rather than eyeballed. Surface/border tints are flat
+hex in light mode but alpha `rgba` in dark mode — dark mode's elevations
+(page/surface/sunken) are far enough apart in lightness that a flat tint
+tuned for one looks wrong on another, where an alpha overlay scales
+correctly across all of them (see the comment in `tokens.css` for the full
+rule). Rebranding the entire app —
 both themes — was a one-file change, which is the point of the token layer. Light and dark are the same
 token names redefined under `.dark`; `index.css` maps them into Tailwind v4's
 `@theme inline`, so components only ever use semantic utilities

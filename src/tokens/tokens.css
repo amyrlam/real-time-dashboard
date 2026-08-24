@@ -23,6 +23,20 @@
  *   -border  : a border that reads against the tinted fill
  * Status meaning is never carried by color alone — StatusBadge always pairs the
  * color with a label (and a dot shape), per accessibility guidance.
+ *
+ * Hex vs. rgba is a deliberate choice, not inconsistency:
+ *   - hex   : a fixed, exact color regardless of what's behind it — every
+ *             `-accent`/`-text` token, and light mode's `-surface`/`-border`
+ *             tints. Light mode's three elevations (page/surface/sunken) sit
+ *             close enough in lightness that one hand-picked flat tint reads
+ *             correctly against any of them.
+ *   - rgba  : a translucent overlay that composites onto *whatever's
+ *             underneath* — `-bg-hover`, the shadows, and dark mode's
+ *             `-surface`/`-border` tints. Dark mode's elevations are far
+ *             apart in lightness (page/surface/sunken), so a flat hex tuned
+ *             for one would look wrong on another; an alpha tint scales
+ *             correctly across all of them and avoids the muddy look flat
+ *             saturated fills get on a near-black ground.
  */
 
 :root {
