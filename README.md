@@ -264,7 +264,10 @@ executable, so most of this is enforced in CI rather than asserted here.
 - Every interactive element is a native `<button>` / `<input>` — no
   `div`-with-`onClick`, so activation, focus, and Enter/Space come from the
   platform rather than from re-implemented handlers.
-- The full tab order is pinned by a test (below).
+- The full tab order, focus rings (both themes), and Enter/Space activation
+  are pinned by tests that run in CI (below). Not covered: keyboard behaviour
+  at narrow widths, and Storybook stories in isolation — both are exercised by
+  hand only.
 
 **Semantics**
 - `aria-sort` on sortable column headers; required `ariaLabel` props on
@@ -302,10 +305,14 @@ others structurally can't:
    opacity, stacking, missing labels.
 3. **Keyboard navigation** — `pnpm test:e2e`
    ([e2e/keyboard-nav.spec.ts](e2e/keyboard-nav.spec.ts)) walks the built app
-   with real Tab presses and pins the **entire tab order** (role + accessible
-   name per stop, read from Playwright's accessibility engine — roughly what a
-   screen reader announces), a focus ring on every stop, and Enter/Space
-   activation with correct `aria-expanded` / `aria-sort`.
+   with real Tab presses. Six tests pin: the **entire tab order** (role +
+   accessible name per stop, read from Playwright's accessibility engine —
+   roughly what a screen reader announces); an accessible name on every stop;
+   a visible focus ring on every stop, **in both light and dark** (the ring is
+   a themed token, so asserting one theme would leave half the claim
+   unguarded); and Enter/Space activation with correct `aria-expanded` /
+   `aria-sort`, including that the disclosure's panel content actually appears
+   and not merely that its trigger's `aria-expanded` flipped.
 
    Layer 3 exists because layers 1 and 2 both missed a real bug. Recharts
    defaults `accessibilityLayer` on, which put `tabIndex=0 role="application"`

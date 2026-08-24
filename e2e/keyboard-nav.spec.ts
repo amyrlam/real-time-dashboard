@@ -166,6 +166,29 @@ test('the roster disclosure is operable by keyboard and reports its state', asyn
   await expect(roster).toHaveCount(0)
 })
 
+test.describe('dark theme', () => {
+  // The focus ring is a themed token (--t-focus-ring), so it's a different
+  // colour in dark mode. Asserting the ring only in light mode would leave
+  // half the claim unguarded.
+  test.use({ colorScheme: 'dark' })
+
+  test('every tab stop still shows a visible focus ring', async ({ page }) => {
+    // Confirm we're actually in dark mode before asserting anything about it.
+    await expect(page.locator('html')).toHaveClass(/dark/)
+
+    const stops = await collectTabOrder(page)
+    expect(stops.length).toBeGreaterThan(0)
+
+    const noRing = stops.filter(
+      (s) => s.outlineWidth === 'none' || parseFloat(s.outlineWidth) === 0,
+    )
+    expect(
+      noRing,
+      `Dark-mode tab stops with no focus outline: ${JSON.stringify(noRing)}`,
+    ).toEqual([])
+  })
+})
+
 test('column headers sort by keyboard and expose sort state', async ({
   page,
 }) => {
