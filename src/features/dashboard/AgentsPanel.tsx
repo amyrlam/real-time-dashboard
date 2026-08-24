@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Collapsible } from '@base-ui-components/react/collapsible'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/DataTable'
@@ -25,6 +25,7 @@ const col = createColumnHelper<AgentSnapshot>()
  * an agent on an unscheduled break is.
  */
 export function AgentsPanel({ agents, loading }: AgentsPanelProps) {
+  const [rosterOpen, setRosterOpen] = useState(false)
   const outOfAdherence = useMemo(
     () =>
       agents
@@ -120,7 +121,7 @@ export function AgentsPanel({ agents, loading }: AgentsPanelProps) {
         {loading ? (
           <Skeleton className="h-4 w-48" />
         ) : (
-          <Collapsible.Root>
+          <Collapsible.Root open={rosterOpen} onOpenChange={setRosterOpen}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-xs text-ink-secondary">
                 {adherent.length} on plan
@@ -133,11 +134,8 @@ export function AgentsPanel({ agents, loading }: AgentsPanelProps) {
                   </span>
                 )}
               </p>
-              <Collapsible.Trigger className="group rounded-md px-1.5 py-0.5 text-xs font-medium text-accent-text hover:bg-hover">
-                <span className="group-data-[panel-open]:hidden">Show all</span>
-                <span className="hidden group-data-[panel-open]:inline">
-                  Hide
-                </span>
+              <Collapsible.Trigger className="rounded-md px-1.5 py-0.5 text-xs font-medium text-accent-text hover:bg-hover">
+                {rosterOpen ? 'Hide roster' : 'Show all'}
               </Collapsible.Trigger>
             </div>
             <Collapsible.Panel>
