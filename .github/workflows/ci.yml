@@ -58,7 +58,7 @@ jobs:
       - run: pnpm test-storybook:ci
 
   keyboard:
-    name: Keyboard navigation (Playwright)
+    name: Page a11y + keyboard (Playwright)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -80,10 +80,14 @@ jobs:
 
       - run: pnpm exec playwright install --with-deps chromium
 
-      # Walks the real page with Tab and asserts the full tab order,
-      # accessible names, and focus rings. See e2e/keyboard-nav.spec.ts —
-      # this is the layer that catches a stray focusable element, which
-      # neither the contrast test nor the axe pass can see.
+      # Two suites against the real built page:
+      #   e2e/a11y.spec.ts        — axe over the assembled dashboard (light,
+      #     dark, loading), covering the five document-level rules the
+      #     per-story pass above has to disable, plus anything that only goes
+      #     wrong once components are composed.
+      #   e2e/keyboard-nav.spec.ts — the Tab walk: full tab order, accessible
+      #     names, focus rings. Catches a stray focusable element, which
+      #     neither the contrast test nor either axe pass can see.
       # (playwright.config.ts builds + serves the app itself.)
       - run: pnpm test:e2e
 
