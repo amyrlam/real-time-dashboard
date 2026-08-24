@@ -129,6 +129,21 @@ plus Storybook as visual verification for every component state. One test is a
 regression: the hook must tolerate a `fixture` prop constructed inline on
 every render (see below).
 
+**WCAG AA is enforced by CI, not just eyeballed**, in two layers
+([.github/workflows/ci.yml](.github/workflows/ci.yml)):
+
+- `src/tokens/tokens.contrast.test.ts` parses `tokens.css` directly (so it
+  can't drift from the real values) and asserts ≥4.5:1 contrast for every
+  real text/background pairing in the app — including compositing, e.g. the
+  secondary text inside `QueuesPanel`'s breached-row wash, not just text on
+  a plain card. This test is what caught the light/dark `ink-muted` and
+  status-accent regressions introduced by the Assembled rebrand before they
+  shipped.
+- `pnpm test-storybook` runs axe-core (`axe-playwright` + `@storybook/test-runner`)
+  against every story in headless Chromium — the rendering-level complement
+  to the token math above (catches opacity, stacking, missing labels; things
+  contrast arithmetic alone can't).
+
 ## Where AI was used, and how it was verified
 
 Built pair-programming with Claude Code (Claude drafting, me directing scope,

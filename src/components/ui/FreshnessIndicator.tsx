@@ -51,7 +51,7 @@ export function FreshnessIndicator({
         {meta.label}
       </span>
       {lastUpdatedAt && (
-        <span className="text-ink-muted">
+        <span className="text-ink-secondary">
           · updated {formatRelativeTime(lastUpdatedAt, now)}
         </span>
       )}

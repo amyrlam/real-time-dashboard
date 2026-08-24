@@ -51,7 +51,7 @@
   --t-border-strong: #c6c3ba;
   --t-ink: #0b1215;
   --t-ink-secondary: #4a4e55;
-  --t-ink-muted: #73716a;
+  --t-ink-muted: #6c6a63;
   --t-gridline: #e7e5df;
 
   /* Accent (interactive, links, focus) — brand indigo */
@@ -60,13 +60,13 @@
   --t-focus-ring: #516be9;
 
   /* Status: healthy — brand evergreen family */
-  --t-healthy-accent: #0e9f72;
+  --t-healthy-accent: #0e9d71;
   --t-healthy-text: #0c6149;
   --t-healthy-surface: #e5f1ea;
   --t-healthy-border: #b9dcc9;
 
   /* Status: at-risk — warm amber */
-  --t-risk-accent: #c08200;
+  --t-risk-accent: #b87c00;
   --t-risk-text: #8a5c00;
   --t-risk-surface: #f9efd6;
   --t-risk-border: #ead2a0;
@@ -107,7 +107,7 @@
   --t-border-strong: #3e4c4a;
   --t-ink: #f0efe9;
   --t-ink-secondary: #bcc3bd;
-  --t-ink-muted: #838b85;
+  --t-ink-muted: #8d958f;
   --t-gridline: #1c2625;
 
   --t-accent: #7d92f2;
