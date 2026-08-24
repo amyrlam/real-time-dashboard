@@ -58,6 +58,13 @@ export function Sparkline({
         <AreaChart
           data={points}
           margin={{ top: 2, right: 0, bottom: 2, left: 0 }}
+          // Recharts' own keyboard-nav layer defaults on (tabIndex=0,
+          // role="application" on the SVG) — redundant with, and in
+          // conflict with, the role="img"/aria-label static description
+          // above: an "application" region can't sit inside an atomic
+          // "img" without contradicting it, and there's no exposed
+          // keyboard interaction here to justify the tab stop.
+          accessibilityLayer={false}
         >
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
