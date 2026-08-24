@@ -4,6 +4,10 @@ A real-time contact-center dashboard — the page an operations manager keeps on
 second monitor all morning — built as a small design system underneath a single
 page. Take-home for Assembled.
 
+See [docs/PLAN.md](docs/PLAN.md) for the planning doc drafted before/during the
+build (scope, decisions, architecture, build order) — kept for process
+transparency alongside the "Where AI was used" section below.
+
 ## Run it
 
 ```bash
@@ -133,9 +137,16 @@ stack, and product calls). Verification was layered rather than trust-based:
 
 ## If I had more time
 
-- **StyleX exploration**: colocated atomic styles with statically analyzable
-  tokens are arguably a better substrate for agent-written UI than utility
-  strings — I'd prototype one primitive both ways and compare.
+- **StyleX exploration**: the semantic-token layer (CSS variables) could be
+  ported to StyleX `defineVars` for typed, compiler-enforced tokens — a
+  component could constrain exactly which style properties consumers are
+  allowed to override, a stronger API contract than a plain `className:
+  string`, and appealing for AI-assisted codebases (statically analyzable, no
+  invalid-class-string ambiguity). Deliberately not chosen here: Vite's
+  StyleX integration is Babel-plugin-based, and the Base UI / Tailwind v4 /
+  Storybook stack here assumes CSS-variable theming. If time allowed, I'd
+  restyle `StatusBadge` on a spike branch (it's clean of ad-hoc className
+  passthrough) to make the comparison concrete for a walkthrough.
 - Row virtualization in `DataTable` for hundreds-of-agents scale.
 - Queue → agents cross-filtering (click a queue, see its staff).
 - Storybook a11y addon + axe in CI; visual regression snapshots.
