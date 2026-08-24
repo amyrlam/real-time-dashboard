@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { DeltaChip } from './DeltaChip'
+import { Delta } from './Delta'
 
 const meta = {
-  title: 'Primitives/DeltaChip',
-  component: DeltaChip,
+  title: 'Primitives/Delta',
+  component: Delta,
   argTypes: {
     // Docgen otherwise dumps the whole formatSignedPct source into the table.
     format: { table: { defaultValue: { summary: 'formatSignedPct' } } },
@@ -35,7 +35,7 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof DeltaChip>
+} satisfies Meta<typeof Delta>
 export default meta
 
 type Story = StoryObj<typeof meta>
@@ -54,13 +54,13 @@ export const PolarityMatters: Story = {
   render: () => (
     <dl className="grid w-max grid-cols-[auto_auto] gap-x-6 gap-y-1 text-sm">
       <dt className="text-ink-secondary">Volume vs forecast</dt>
-      <dd><DeltaChip value={25} positiveIsGood={false} /></dd>
+      <dd><Delta value={25} positiveIsGood={false} /></dd>
       <dt className="text-ink-secondary">SLA attainment</dt>
-      <dd><DeltaChip value={25} positiveIsGood /></dd>
+      <dd><Delta value={25} positiveIsGood /></dd>
       <dt className="text-ink-secondary">Volume under forecast</dt>
-      <dd><DeltaChip value={-8} positiveIsGood={false} /></dd>
+      <dd><Delta value={-8} positiveIsGood={false} /></dd>
       <dt className="text-ink-secondary">No change</dt>
-      <dd><DeltaChip value={0} /></dd>
+      <dd><Delta value={0} /></dd>
     </dl>
   ),
 }
@@ -70,9 +70,9 @@ export const QuietBand: Story = {
   args: { value: 4 },
   render: () => (
     <div className="flex items-center gap-4">
-      <DeltaChip value={4} positiveIsGood={false} quietBand={10} />
-      <DeltaChip value={-6} positiveIsGood={false} quietBand={10} />
-      <DeltaChip value={22} positiveIsGood={false} quietBand={10} />
+      <Delta value={4} positiveIsGood={false} quietBand={10} />
+      <Delta value={-6} positiveIsGood={false} quietBand={10} />
+      <Delta value={22} positiveIsGood={false} quietBand={10} />
     </div>
   ),
 }

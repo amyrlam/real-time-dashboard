@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { DeltaChip } from './DeltaChip'
+import { Delta } from './Delta'
 import { StatCard } from './StatCard'
 
 const meta = {
@@ -30,7 +30,7 @@ export const WithDelta: Story = {
     label: 'Tickets waiting',
     value: 84,
     delta: (
-      <DeltaChip
+      <Delta
         value={8}
         positiveIsGood={false}
         format={(v) => `+${v}`}

@@ -2,7 +2,7 @@ import { cn } from '../../lib/cn'
 import { formatSignedPct } from '../../lib/format'
 import { INTENT_CLASSES, type Intent } from './intent'
 
-export interface DeltaChipProps {
+export interface DeltaProps {
   /** The delta. Positive renders ▲, negative ▼, zero a neutral dash. */
   value: number
   /**
@@ -26,13 +26,13 @@ export interface DeltaChipProps {
  * move is good or bad (not by its sign). Text-only — designed to sit inline
  * in stat cards and table cells without adding visual weight.
  */
-export function DeltaChip({
+export function Delta({
   value,
   positiveIsGood = true,
   format = formatSignedPct,
   quietBand = 0,
   srLabel,
-}: DeltaChipProps) {
+}: DeltaProps) {
   const rounded = Math.round(value)
   const direction = rounded === 0 ? 'flat' : rounded > 0 ? 'up' : 'down'
   const quiet = direction === 'flat' || Math.abs(rounded) < quietBand

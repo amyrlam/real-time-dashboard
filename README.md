@@ -213,10 +213,10 @@ The page is composition-only; every visual element is one of ~10 primitives in
 | Component | Role |
 |---|---|
 | `StatusBadge` | The single source of status color: tinted chip, dot + label (never color alone) |
-| `DeltaChip` | Signed change; **polarity is a prop** (`positiveIsGood`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
+| `Delta` | Signed change; **polarity is a prop** (`positiveIsGood`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
 | `Duration` | Tabular-figure durations, `human` ("2m 55s") or `clock` ("2:55") |
 | `Sparkline` | Micro area chart with optional threshold line and hover tooltip |
-| `StatCard` | One headline number; composes `DeltaChip`, has a matching skeleton |
+| `StatCard` | One headline number; composes `Delta`, has a matching skeleton |
 | `Panel` | The layout surface: titled header, actions slot, `padded={false}` for full-bleed tables |
 | `DataTable` | Thin TanStack Table wrapper owning rhythm, sticky header, sorting, loading/empty states; column defs stay with the caller |
 | `EmptyState` / `ErrorState` / `Skeleton` | Shared vocabulary for vacancy, failure, loading |

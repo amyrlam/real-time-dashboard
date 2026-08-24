@@ -1,4 +1,4 @@
-import { DeltaChip } from '../../components/ui/DeltaChip'
+import { Delta } from '../../components/ui/Delta'
 import { StatCard } from '../../components/ui/StatCard'
 import type { SummarySnapshot } from '../../lib/types'
 
@@ -31,7 +31,7 @@ export function SummaryRow({ summary, previous, loading }: SummaryRowProps) {
         value={s ? `${s.sla_attainment_pct}%` : '—'}
         delta={
           attainmentDelta !== null && attainmentDelta !== 0 ? (
-            <DeltaChip
+            <Delta
               value={attainmentDelta}
               positiveIsGood
               format={(v) => `${v > 0 ? '+' : '−'}${Math.abs(Math.round(v))}pt`}
@@ -57,7 +57,7 @@ export function SummaryRow({ summary, previous, loading }: SummaryRowProps) {
         value={s ? s.tickets_waiting_total : '—'}
         delta={
           waitingDelta !== null && waitingDelta !== 0 ? (
-            <DeltaChip
+            <Delta
               value={waitingDelta}
               positiveIsGood={false}
               format={(v) => `${v > 0 ? '+' : '−'}${Math.abs(Math.round(v))}`}
