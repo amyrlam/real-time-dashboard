@@ -57,8 +57,26 @@ different scale, the note says so.
 | | Version | Why this |
 |---|---|---|
 | **Tailwind CSS** | v4 | CSS-first config: tokens are mapped in `src/index.css` under `@theme inline`, so components use semantic utilities (`bg-surface`) and never raw palette values. No `tailwind.config.js`. |
-| **Base UI** | 1.0.0-rc.0 | Headless behavior + accessibility semantics, styled entirely by our tokens — the shadcn-style split. Currently used for `Collapsible` (the roster disclosure). **Note:** this is a pre-1.0 RC, and the package has since been renamed to `@base-ui/react`; migrating is a rename, but it's a real dependency risk worth naming. |
+| **Base UI** | 1.0.0-rc.0 | Headless behavior + accessibility semantics, styled entirely by our tokens — the shadcn-style split. Currently used for `Collapsible` (the roster disclosure). See the note below on why Base UI over Radix, and on the version. |
 | **clsx** | 2 | Behind `src/lib/cn.ts`. |
+
+**Why Base UI rather than Radix.** Radix is the more familiar name, but Base UI
+is the actively-maintained continuation of that lineage: its own docs describe
+it as "from the creators of Radix, Material UI, and Floating UI", and several
+of the engineers who originally built Radix now build Base UI, under the MUI
+organization — so there's a funded team behind it. Radix's development slowed
+noticeably after WorkOS acquired Modulz and much of the original team moved
+on; issues on the more complex primitives sat open for long stretches. For a
+dependency whose entire job is behavior and accessibility semantics — the part
+you least want quietly rotting — the maintained lineage mattered more than the
+familiar name. (shadcn/ui now offers Base UI alongside Radix for the same
+reason.)
+
+**On the version:** this repo is on `1.0.0-rc.0` of the pre-rename package
+`@base-ui-components/react`. Base UI shipped a stable **1.0.0** in December
+2025 under the new name `@base-ui/react`. Upgrading is a rename plus a version
+bump across a single component (`Collapsible`), and is the first thing I'd do
+on this repo after the walkthrough.
 
 ### Data display
 
@@ -88,15 +106,14 @@ different scale, the note says so.
   See [docs/previews.md](docs/previews.md).
 
 > The brief puts "production deployment, CI/CD, infra-as-code" out of scope, and
-> I've held to that: there's no deploy pipeline, no environments, no
-> infra-as-code. What's here is narrow and deliberate — CI exists only to keep
-> the accessibility claims in this README executable rather than asserted, and
-> it has already caught three real regressions (two contrast, one keyboard).
-> The Vercel previews exist so reviewers can open the dashboard and Storybook
-> without cloning. Both are reviewer-facing conveniences, not shipping
-> machinery; if that reads as scope creep, the a11y suites still run with a
-> single `pnpm` command and the workflow file can be deleted without touching
-> the app.
+> I've held to that line: there's no deploy pipeline, no environments, no
+> infra-as-code. These two are working tools rather than shipping machinery.
+> CI is what keeps the accessibility claims in this README executable instead
+> of asserted — it has already caught three real regressions (two contrast,
+> one keyboard) that review by eye had missed. The Vercel previews mean any
+> reviewer can open the dashboard *and* Storybook from a PR without cloning
+> and installing. Both earned their place during the build; neither is a
+> deployment story.
 
 ---
 
