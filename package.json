@@ -1,6 +1,7 @@
 {
   "name": "real-time-dashboard",
   "private": true,
+  "packageManager": "pnpm@11.15.1",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

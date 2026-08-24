@@ -18,6 +18,9 @@ pnpm test         # vitest (feed lifecycle + formatting)
 pnpm build        # production build (tsc + vite)
 ```
 
+Branch previews: every PR deploys the dashboard **and** Storybook as separate
+Vercel previews — see [docs/previews.md](docs/previews.md).
+
 The page replays the sample feed (`src/data/dashboard_state.json`) on a timer to
 simulate live ticks. The **Demo controls** panel (bottom right) exists so every
 feed state is reachable during a walkthrough: scrub the replay, pause until the
