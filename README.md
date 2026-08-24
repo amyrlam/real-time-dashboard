@@ -4,6 +4,9 @@ A real-time contact-center dashboard — the page an operations manager keeps on
 second monitor all morning — built as a small design system underneath a single
 page. Take-home for Assembled.
 
+**Live:** [dashboard](https://real-time-dashboard-eosin-three.vercel.app/) ·
+[Storybook](https://real-time-dashboard-storybook.vercel.app/)
+
 [The brief](https://assembledhq.notion.site/Take-home-interview-Real-time-dashboard-391d57062bc080e690a1ebcf49e7c7de)
 is the source of truth for requirements. This README is the source of truth
 for everything else — what's here, why, and what isn't.
