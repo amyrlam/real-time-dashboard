@@ -4,6 +4,8 @@ A real-time contact-center dashboard — the page an operations manager keeps on
 second monitor all morning — built as a small design system underneath a single
 page. Take-home for Assembled.
 
+- [The brief](https://assembledhq.notion.site/Take-home-interview-Real-time-dashboard-391d57062bc080e690a1ebcf49e7c7de)
+  — the source of truth for requirements.
 - [docs/PLAN.md](docs/PLAN.md) — the planning doc drafted before/during the
   build (scope, decisions, architecture, build order), kept for process
   transparency alongside "Where AI was used" below.
@@ -84,6 +86,17 @@ different scale, the note says so.
   *Keyboard navigation (Playwright)*.
 - **Vercel** — two projects (dashboard + Storybook), branch previews per PR.
   See [docs/previews.md](docs/previews.md).
+
+> The brief puts "production deployment, CI/CD, infra-as-code" out of scope, and
+> I've held to that: there's no deploy pipeline, no environments, no
+> infra-as-code. What's here is narrow and deliberate — CI exists only to keep
+> the accessibility claims in this README executable rather than asserted, and
+> it has already caught three real regressions (two contrast, one keyboard).
+> The Vercel previews exist so reviewers can open the dashboard and Storybook
+> without cloning. Both are reviewer-facing conveniences, not shipping
+> machinery; if that reads as scope creep, the a11y suites still run with a
+> single `pnpm` command and the workflow file can be deleted without touching
+> the app.
 
 ---
 

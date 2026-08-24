@@ -4,6 +4,10 @@
 > process transparency (see README's "Where AI was used" section) — some
 > specifics (file layout, exact component list) shifted slightly during
 > implementation; the README is the source of truth for what actually shipped.
+>
+> **The brief itself is the source of truth for requirements:**
+> [Take-home interview: Real-time dashboard](https://assembledhq.notion.site/Take-home-interview-Real-time-dashboard-391d57062bc080e690a1ebcf49e7c7de).
+> Where this plan and the brief disagree, the brief wins.
 
 ## Context
 
@@ -17,7 +21,17 @@ Take-home interview for a **design systems engineer** role at Assembled (walkthr
 
 Their explicit guidance: *"a smaller, sharper system beats a sprawling half-finished one."*
 
-**Data**: `dashboard_state.json` (95.5 KiB Notion attachment) — `current` snapshot (14:45) + `history` of 5-min ticks. Each frame: `summary` (headline stats), `queues[]` (sla_status healthy/at_risk/breached, waits, volume vs forecast, `wait_trend_sec` sparkline array), `agents[]` (state, adherence_status, durations). Narrative baked in: billing breached, vip at-risk/recovering, tier_2 healthy, 2 agents out of adherence. No real backend needed — replaying the fixture is explicitly fine; components must be designed as if data can change, arrive late, or fail.
+**Data**: `dashboard_state.json` (95.5 KiB Notion attachment) — `current` snapshot (14:45) + `history` of 5-min ticks. Each frame: `summary` (headline stats), `queues[]` (sla_status healthy/at_risk/breached, waits, volume vs forecast, `wait_trend_sec` sparkline array), `agents[]` (state, adherence_status, durations). Narrative baked in: billing breached, vip at-risk/recovering, tier_2 healthy.
+
+> **Discrepancy worth knowing:** the brief's prose says "two agents are currently
+> out of adherence", but the shipped `current` snapshot (14:45) actually has
+> **three** (Alex T., Jordan P., Omar B.) and **two** breached queues (Billing
+> *and* Live Chat, with VIP at risk). The file is internally consistent —
+> `summary.agents_out_of_adherence` is 3 and three agents carry
+> `out_of_adherence` — so the data is right and the brief's description is
+> stale. We build from the data.
+
+No real backend needed — replaying the fixture is explicitly fine; components must be designed as if data can change, arrive late, or fail.
 
 **Submission**: runnable repo (GitHub: `amyrlam/real-time-dashboard`, remote already configured) + running dashboard + component catalog (Storybook).
 
@@ -117,7 +131,7 @@ Two design notes that make the beat land: keep the token layer strictly semantic
 
 ## Verification
 
-- `pnpm dev` — dashboard renders the narrative (billing breached, vip at-risk, tier_2 healthy, 2 agents out of adherence); replay visibly ticks; SimPanel can pause / error / go stale and every state renders sanely
+- `pnpm dev` — dashboard renders the narrative (at 14:45: Billing + Live Chat breached, VIP at risk, Tier 2 healthy, 3 agents out of adherence); replay visibly ticks; SimPanel can pause / error / go stale and every state renders sanely
 - `pnpm storybook` — every primitive shows all states/variants in light + dark
 - `pnpm test` — hook + util tests green; `pnpm build` + `pnpm build-storybook` clean
 - Browser-pane check at desktop + ~768px widths, dark + light, keyboard-only tab-through
