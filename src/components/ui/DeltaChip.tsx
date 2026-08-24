@@ -19,7 +19,6 @@ export interface DeltaChipProps {
   quietBand?: number
   /** Screen-reader context, e.g. "vs forecast". Appended after the value. */
   srLabel?: string
-  className?: string
 }
 
 /**
@@ -33,7 +32,6 @@ export function DeltaChip({
   format = formatSignedPct,
   quietBand = 0,
   srLabel,
-  className,
 }: DeltaChipProps) {
   const rounded = Math.round(value)
   const direction = rounded === 0 ? 'flat' : rounded > 0 ? 'up' : 'down'
@@ -47,7 +45,6 @@ export function DeltaChip({
       className={cn(
         'inline-flex items-center gap-0.5 text-xs font-medium tabular-nums',
         INTENT_CLASSES[intent].text,
-        className,
       )}
     >
       <span aria-hidden>
