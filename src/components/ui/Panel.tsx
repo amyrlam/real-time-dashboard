@@ -33,7 +33,7 @@ export function Panel({
         className,
       )}
     >
-      {(title || actions) && (
+      {(title || subtitle || actions) && (
         <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line px-4 py-3">
           <div className="min-w-0">
             {title && (

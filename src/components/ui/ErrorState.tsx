@@ -14,8 +14,9 @@ export interface ErrorStateProps {
 }
 
 /**
- * The system's vocabulary for "this failed to load". Announced politely to
- * assistive tech via `role="alert"`, with an optional retry affordance.
+ * The system's vocabulary for "this failed to load". Announced assertively to
+ * assistive tech via `role="alert"` — an error interrupting is the point —
+ * with an optional retry affordance.
  */
 export function ErrorState({
   title,

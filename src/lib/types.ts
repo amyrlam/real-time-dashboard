@@ -67,6 +67,14 @@ export interface SummarySnapshot {
   agents_out_of_adherence: number
 }
 
+/**
+ * Client-side connection state of the live feed. Not part of the API payload —
+ * it describes the transport, and lives here so the data layer
+ * (`useDashboardFeed`) and the UI (`FreshnessIndicator`) can share it without
+ * the data layer importing from a component.
+ */
+export type FeedStatus = 'connecting' | 'live' | 'paused' | 'stale' | 'error'
+
 /** One tick of the feed — everything the dashboard needs to render "now". */
 export interface DashboardFrame {
   ts: string

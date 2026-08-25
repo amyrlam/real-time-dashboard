@@ -1,16 +1,14 @@
 import { cn } from '../../lib/cn'
 import { formatRelativeTime } from '../../lib/format'
+import type { FeedStatus } from '../../lib/types'
 import { useNow } from '../../lib/useNow'
 import { INTENT_CLASSES, type Intent } from './intent'
-
-export type FeedStatus = 'connecting' | 'live' | 'paused' | 'stale' | 'error'
 
 export interface FreshnessIndicatorProps {
   /** Connection state of the data feed. */
   status: FeedStatus
   /** When data last arrived successfully. Null before the first tick. */
   lastUpdatedAt?: Date | null
-  className?: string
 }
 
 const STATUS_META: Record<FeedStatus, { label: string; intent: Intent }> = {
@@ -29,16 +27,12 @@ const STATUS_META: Record<FeedStatus, { label: string; intent: Intent }> = {
 export function FreshnessIndicator({
   status,
   lastUpdatedAt,
-  className,
 }: FreshnessIndicatorProps) {
   const now = useNow()
   const meta = STATUS_META[status]
 
   return (
-    <span
-      role="status"
-      className={cn('inline-flex items-center gap-1.5 text-xs', className)}
-    >
+    <span role="status" className="inline-flex items-center gap-1.5 text-xs">
       <span
         aria-hidden
         className={cn(
