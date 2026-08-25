@@ -43,6 +43,25 @@ export const ErrorWithRetry: Story = {
   ),
 }
 
+/**
+ * The Retry button's hover state, forced via the pseudo-states addon. Its
+ * focus treatment is the global `:focus-visible` ring (`src/index.css`) —
+ * components don't own focus styles — shown here on the same button.
+ */
+export const RetryInteractionStates: Story = {
+  args: { title: '' },
+  parameters: {
+    pseudo: { hover: ['button'], focusVisible: ['button'] },
+  },
+  render: () => (
+    <ErrorState
+      title="Couldn't load queue data"
+      description="The metrics feed didn’t respond."
+      onRetry={() => {}}
+    />
+  ),
+}
+
 export const SkeletonBlocks: Story = {
   args: { title: '' },
   render: () => (

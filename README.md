@@ -214,7 +214,7 @@ The page is composition-only; every visual element is one of ~10 primitives in
 | Component | Role |
 |---|---|
 | `StatusBadge` | The single source of status color: tinted chip, dot + label (never color alone) |
-| `Delta` | Signed change; **polarity is a prop** (`positiveIsGood`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
+| `Delta` | Signed change; **polarity is a prop** (`polarity="lower-is-better"`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
 | `Duration` | Tabular-figure durations, `human` ("2m 55s") or `clock` ("2:55") |
 | `Sparkline` | Micro area chart with optional threshold line and hover tooltip |
 | `StatCard` | One headline number; composes `Delta`, has a matching skeleton |
@@ -235,6 +235,17 @@ API principles, applied consistently:
   colors (consistency is the point), no `onClick` on `StatCard` (it's a
   reading surface), no pagination on `DataTable` (an ops page shows the floor,
   not page 2 of it).
+- **`className` follows a line, not a habit.** Layout primitives (`Panel`,
+  `StatCard`, `EmptyState`, `ErrorState`, `Skeleton`) accept `className` for
+  grid placement and sizing; data-semantic primitives (`Delta`, `Duration`,
+  `StatusBadge`, `Sparkline`, `FreshnessIndicator`) don't — their whole value
+  is rendering the same way everywhere.
+- **Renames are cheap early; ambiguity is expensive forever.** `Delta`'s
+  polarity prop began as `positiveIsGood?: boolean` and was renamed to
+  `polarity: 'higher-is-better' | 'lower-is-better'` — "positive" read as the
+  value's sign as easily as the metric's direction, and the common call site
+  was a double negative (`positiveIsGood={false}`). The enum also leaves room
+  for a valence-free `'none'` without a second boolean.
 
 ## Tokens and theming
 
@@ -407,6 +418,18 @@ list a reviewer would otherwise have to find by poking.
 |---|---|
 | No row virtualization | Fine for 6 queues and 13 agents; a floor of hundreds of agents would need it. |
 
+**API review notes**
+
+Smaller observations from a props audit — known, not (yet) acted on:
+
+| Note | Detail |
+|---|---|
+| Unused API surface | `StatusBadge size="md"` (the default), `EmptyState size="default"`, and `ErrorState size="compact"` have no in-app call sites — fine for a system, worth knowing when reading coverage. |
+| `--color-focus` unused as a utility | The token is mapped into Tailwind but the focus ring comes from the raw `:focus-visible` rule; no utility class references it. |
+| `StatCard intent` is hue-only | Unlike `Duration`, the colored value gets no weight change. Both current uses pair the number with a label, so nothing is color-alone today — but the primitive doesn't enforce it. |
+| Hand-rolled disconnect banner | `DashboardPage` builds the reconnect banner from raw breach tokens instead of composing `ErrorState` — candidate for a `Banner` primitive if a second one appears. |
+| `SimPanel` bypasses the system | Demo-only control panel, hand-rolled; a real deployment ships without it. |
+
 ## Where AI was used, and how it was verified
 
 Built pair-programming with Claude Code (Claude drafting, me directing scope,
@@ -436,9 +459,9 @@ that plan is in git history. Verification was layered rather than trust-based:
 
 ## If I had more time
 
-Closing the [Known gaps](#known-gaps) comes first — in that order:
-`prefers-reduced-motion`, then visual regression, then the `useDashboardFeed`
-purity warnings. Beyond fixing what's already broken, the things I'd *add*:
+Closing the [Known gaps](#known-gaps) comes first — in that order: visual
+regression, then the `useDashboardFeed` purity warnings. Beyond fixing what's
+already broken, the things I'd *add*:
 
 - **StyleX exploration**: the semantic-token layer (CSS variables) could be
   ported to StyleX `defineVars` for typed, compiler-enforced tokens — a

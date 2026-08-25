@@ -22,7 +22,9 @@ export interface DataTableProps<TData> {
   getRowId?: (row: TData) => string
   /**
    * Tint a row by state (e.g. breached queues). Use sparingly — a wash on
-   * every row means nothing stands out.
+   * every row means nothing stands out. The tinted state must also appear
+   * as text in a column (a StatusBadge, a label): the wash reinforces, it
+   * never carries meaning alone (WCAG 1.4.1).
    */
   rowIntent?: (row: TData) => Intent | undefined
   /** Initial sort; users can re-sort by clicking sortable headers. */
