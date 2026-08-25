@@ -137,7 +137,7 @@ export function QueuesPanel({ queues, loading }: QueuesPanelProps) {
             <div className="flex flex-col items-end">
               <Delta
                 value={q.volume_vs_forecast_pct}
-                positiveIsGood={false}
+                polarity="lower-is-better"
                 quietBand={10}
                 srLabel="vs forecast"
               />

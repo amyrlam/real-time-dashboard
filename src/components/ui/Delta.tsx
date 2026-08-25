@@ -2,14 +2,17 @@ import { cn } from '../../lib/cn'
 import { formatSignedPct } from '../../lib/format'
 import { INTENT_CLASSES, type Intent } from './intent'
 
+export type DeltaPolarity = 'higher-is-better' | 'lower-is-better'
+
 export interface DeltaProps {
   /** The delta. Positive renders ▲, negative ▼, zero a neutral dash. */
   value: number
   /**
-   * Whether an increase is good news. Volume over forecast: `false`.
-   * SLA attainment up: `true`. Polarity is a prop, never an assumption.
+   * Which direction is good news. Volume over forecast: `"lower-is-better"`.
+   * SLA attainment: `"higher-is-better"` (the default). Polarity is a prop,
+   * never an assumption.
    */
-  positiveIsGood?: boolean
+  polarity?: DeltaPolarity
   /** Render the value; defaults to a signed percent ("+25%"). */
   format?: (value: number) => string
   /**
@@ -28,7 +31,7 @@ export interface DeltaProps {
  */
 export function Delta({
   value,
-  positiveIsGood = true,
+  polarity = 'higher-is-better',
   format = formatSignedPct,
   quietBand = 0,
   srLabel,
@@ -36,7 +39,7 @@ export function Delta({
   const rounded = Math.round(value)
   const direction = rounded === 0 ? 'flat' : rounded > 0 ? 'up' : 'down'
   const quiet = direction === 'flat' || Math.abs(rounded) < quietBand
-  const good = quiet ? null : (rounded > 0) === positiveIsGood
+  const good = quiet ? null : (rounded > 0) === (polarity === 'higher-is-better')
   const intent: Intent =
     good === null ? 'neutral' : good ? 'healthy' : 'breach'
 
