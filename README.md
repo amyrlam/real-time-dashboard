@@ -401,7 +401,7 @@ list a reviewer would otherwise have to find by poking.
 
 | Gap | Detail |
 |---|---|
-| No visual regression | Nothing here would catch a purely visual break — wrong spacing, a broken layout, a colour that changed but still passes contrast. The largest single hole in the setup. |
+| Visual regression wired, not armed | Chromatic is configured — every story, including the assembled `Pages/Dashboard`, snapshots at 375/768/1280px (`pnpm chromatic`, plus a CI job) — but it needs a `CHROMATIC_PROJECT_TOKEN` repo secret to run; until one exists the CI job skips and nothing catches a purely visual break. |
 | Primitives have no unit tests | Unit coverage is the feed state machine, the formatters, and the tokens. Component behaviour is verified through Storybook plus the two a11y suites, which is deliberate at this size but wouldn't scale. |
 | E2E is Chromium-only | One browser, one viewport. No Firefox or WebKit. |
 
@@ -459,9 +459,9 @@ that plan is in git history. Verification was layered rather than trust-based:
 
 ## If I had more time
 
-Closing the [Known gaps](#known-gaps) comes first — in that order: visual
-regression, then the `useDashboardFeed` purity warnings. Beyond fixing what's
-already broken, the things I'd *add*:
+Closing the [Known gaps](#known-gaps) comes first — in that order: arming the
+already-wired Chromatic job with a project token, then the `useDashboardFeed`
+purity warnings. Beyond fixing what's already broken, the things I'd *add*:
 
 - **StyleX exploration**: the semantic-token layer (CSS variables) could be
   ported to StyleX `defineVars` for typed, compiler-enforced tokens — a

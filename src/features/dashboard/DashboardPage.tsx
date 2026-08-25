@@ -1,6 +1,9 @@
 import { ErrorState } from '../../components/ui/ErrorState'
 import { FreshnessIndicator } from '../../components/ui/FreshnessIndicator'
-import { useDashboardFeed } from '../../data/useDashboardFeed'
+import {
+  useDashboardFeed,
+  type DashboardFeedOptions,
+} from '../../data/useDashboardFeed'
 import fixture from '../../data/dashboard_state.json'
 import { useTheme } from '../../lib/useTheme'
 import type { DashboardFixture } from '../../lib/types'
@@ -16,8 +19,16 @@ const data = fixture as DashboardFixture
  * worst-first, and the agents who need a tap on the shoulder. The page owns
  * layout and feed wiring only — every visual element is a reusable primitive.
  */
-export function DashboardPage() {
-  const feed = useDashboardFeed(data)
+export interface DashboardPageProps {
+  /**
+   * Feed timing overrides for stories and tests (e.g. a frozen replay for
+   * visual snapshots). The app renders with the defaults.
+   */
+  feedOptions?: DashboardFeedOptions
+}
+
+export function DashboardPage({ feedOptions }: DashboardPageProps = {}) {
+  const feed = useDashboardFeed(data, feedOptions)
   const { theme, toggle } = useTheme()
 
   const loading = feed.status === 'connecting'

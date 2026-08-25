@@ -29,6 +29,45 @@ jobs:
 
       - run: pnpm build
 
+  # Visual regression via Chromatic: every story (including Pages/Dashboard)
+  # at 375/768/1280px — see `chromatic.viewports` in .storybook/preview.tsx.
+  # The job is a no-op until a CHROMATIC_PROJECT_TOKEN repo secret exists;
+  # secrets aren't readable in job-level `if`, hence the check job.
+  chromatic-check:
+    name: Chromatic token check
+    runs-on: ubuntu-latest
+    outputs:
+      has-token: ${{ steps.check.outputs.has-token }}
+    steps:
+      - id: check
+        run: echo "has-token=${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
+  chromatic:
+    name: Visual regression (Chromatic)
+    runs-on: ubuntu-latest
+    needs: chromatic-check
+    if: needs.chromatic-check.outputs.has-token == 'true'
+    steps:
+      # Full history — Chromatic diffs against baselines by ancestor commit.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: chromaui/action@v11
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Diffs don't fail CI; they're reviewed and accepted in Chromatic.
+          exitZeroOnChanges: true
+
   a11y:
     name: Storybook accessibility (axe)
     runs-on: ubuntu-latest

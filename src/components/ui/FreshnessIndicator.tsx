@@ -45,7 +45,9 @@ export function FreshnessIndicator({
         {meta.label}
       </span>
       {lastUpdatedAt && (
-        <span className="text-ink-secondary">
+        // chromatic-ignore: the relative timestamp ticks with wall-clock time,
+        // so visual snapshots exclude this span rather than flake on it.
+        <span className="chromatic-ignore text-ink-secondary">
           · updated {formatRelativeTime(lastUpdatedAt, now)}
         </span>
       )}
