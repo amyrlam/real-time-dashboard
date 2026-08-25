@@ -84,10 +84,7 @@ export function AgentsPanel({ agents, loading }: AgentsPanelProps) {
         header: 'Off plan for',
         meta: { align: 'end' },
         cell: (info) => (
-          <Duration
-            seconds={info.getValue()}
-            className="font-semibold text-breach-text"
-          />
+          <Duration seconds={info.getValue()} intent="breach" />
         ),
       }),
     ],

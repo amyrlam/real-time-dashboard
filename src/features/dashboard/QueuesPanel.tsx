@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/DataTable'
-import { DeltaChip } from '../../components/ui/DeltaChip'
+import { Delta } from '../../components/ui/Delta'
 import { Duration } from '../../components/ui/Duration'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { Panel } from '../../components/ui/Panel'
@@ -64,9 +64,7 @@ export function QueuesPanel({ queues, loading }: QueuesPanelProps) {
               <Duration
                 seconds={q.longest_wait_sec}
                 variant="clock"
-                className={
-                  over > 0 ? 'font-semibold text-breach-text' : 'text-ink'
-                }
+                intent={over > 0 ? 'breach' : undefined}
               />
               <span className="text-2xs text-ink-muted">
                 {over > 0
@@ -137,7 +135,7 @@ export function QueuesPanel({ queues, loading }: QueuesPanelProps) {
           const q = info.row.original
           return (
             <div className="flex flex-col items-end">
-              <DeltaChip
+              <Delta
                 value={q.volume_vs_forecast_pct}
                 positiveIsGood={false}
                 quietBand={10}

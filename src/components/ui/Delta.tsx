@@ -2,7 +2,7 @@ import { cn } from '../../lib/cn'
 import { formatSignedPct } from '../../lib/format'
 import { INTENT_CLASSES, type Intent } from './intent'
 
-export interface DeltaChipProps {
+export interface DeltaProps {
   /** The delta. Positive renders ▲, negative ▼, zero a neutral dash. */
   value: number
   /**
@@ -19,7 +19,6 @@ export interface DeltaChipProps {
   quietBand?: number
   /** Screen-reader context, e.g. "vs forecast". Appended after the value. */
   srLabel?: string
-  className?: string
 }
 
 /**
@@ -27,14 +26,13 @@ export interface DeltaChipProps {
  * move is good or bad (not by its sign). Text-only — designed to sit inline
  * in stat cards and table cells without adding visual weight.
  */
-export function DeltaChip({
+export function Delta({
   value,
   positiveIsGood = true,
   format = formatSignedPct,
   quietBand = 0,
   srLabel,
-  className,
-}: DeltaChipProps) {
+}: DeltaProps) {
   const rounded = Math.round(value)
   const direction = rounded === 0 ? 'flat' : rounded > 0 ? 'up' : 'down'
   const quiet = direction === 'flat' || Math.abs(rounded) < quietBand
@@ -47,7 +45,6 @@ export function DeltaChip({
       className={cn(
         'inline-flex items-center gap-0.5 text-xs font-medium tabular-nums',
         INTENT_CLASSES[intent].text,
-        className,
       )}
     >
       <span aria-hidden>

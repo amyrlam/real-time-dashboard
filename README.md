@@ -4,6 +4,9 @@ A real-time contact-center dashboard — the page an operations manager keeps on
 second monitor all morning — built as a small design system underneath a single
 page. Take-home for Assembled.
 
+**Live:** [dashboard](https://real-time-dashboard-eosin-three.vercel.app/) ·
+[Storybook](https://real-time-dashboard-storybook.vercel.app/)
+
 [The brief](https://assembledhq.notion.site/Take-home-interview-Real-time-dashboard-391d57062bc080e690a1ebcf49e7c7de)
 is the source of truth for requirements. This README is the source of truth
 for everything else — what's here, why, and what isn't.
@@ -28,7 +31,7 @@ are folded in below and the rest is in git history. Second documents only drift.
 | `pnpm test:watch` | Vitest in watch mode |
 | `pnpm build-storybook` | Static Storybook into `storybook-static/` |
 | `pnpm test-storybook:ci` | Serves `storybook-static/` and runs axe over every story (run `build-storybook` first) |
-| `pnpm test:e2e` | Playwright keyboard-navigation suite (builds + serves the app itself) |
+| `pnpm test:e2e` | Playwright: page-level axe audit + keyboard navigation (builds + serves the app itself) |
 
 ## The sample data
 
@@ -110,7 +113,7 @@ are what made it a five-minute change instead of a leap of faith.
 |---|---|---|
 | **Vitest** + **jsdom** | 4 / 30 | Unit: feed state machine, formatters, token contrast. |
 | **Testing Library** | react 16, jest-dom 7, user-event 14 | Hook and DOM assertions. |
-| **Playwright** | 1.62 | Real-browser E2E for keyboard navigation. |
+| **Playwright** | 1.62 | Real-browser E2E: page-level axe audit and keyboard navigation. |
 | **Storybook** | 10 (`react-vite`, `addon-docs`) | The component catalog — an explicit deliverable, and the visual verification layer for component states. |
 | **@storybook/test-runner** + **axe-playwright** | 0.24 / 2.2 | Runs axe-core over every story in headless Chromium. |
 | **oxlint** | 1.75 | Rust-based linter; `react` / `typescript` / `oxc` plugins, `rules-of-hooks` as an error. Fast enough to be unnoticeable in CI. |
@@ -120,7 +123,7 @@ are what made it a five-minute change instead of a leap of faith.
 
 - **GitHub Actions** ([.github/workflows/ci.yml](.github/workflows/ci.yml)) — three
   parallel jobs on every PR: *Lint, test, build* · *Storybook accessibility (axe)* ·
-  *Keyboard navigation (Playwright)*.
+  *Page a11y + keyboard (Playwright)*.
 - **Vercel** — the repo is imported as *two* projects: the dashboard
   (`pnpm build` → `dist`) and the Storybook catalog (`pnpm build-storybook` →
   `storybook-static`). Every PR therefore gets both preview URLs, so a
@@ -154,6 +157,7 @@ src/
     useDashboardFeed.ts    # the whole "live data" lifecycle
   components/ui/           # the reusable primitives — the graded artifact
   features/dashboard/      # page-level composition; deliberately thin
+e2e/a11y.spec.ts           # axe over the assembled page, light + dark + loading
 e2e/keyboard-nav.spec.ts   # tab order, focus rings, activation, reduced motion
 .storybook/                # config + test-runner (axe) setup
 ```
@@ -210,10 +214,10 @@ The page is composition-only; every visual element is one of ~10 primitives in
 | Component | Role |
 |---|---|
 | `StatusBadge` | The single source of status color: tinted chip, dot + label (never color alone) |
-| `DeltaChip` | Signed change; **polarity is a prop** (`positiveIsGood`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
+| `Delta` | Signed change; **polarity is a prop** (`positiveIsGood`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
 | `Duration` | Tabular-figure durations, `human` ("2m 55s") or `clock` ("2:55") |
 | `Sparkline` | Micro area chart with optional threshold line and hover tooltip |
-| `StatCard` | One headline number; composes `DeltaChip`, has a matching skeleton |
+| `StatCard` | One headline number; composes `Delta`, has a matching skeleton |
 | `Panel` | The layout surface: titled header, actions slot, `padded={false}` for full-bleed tables |
 | `DataTable` | Thin TanStack Table wrapper owning rhythm, sticky header, sorting, loading/empty states; column defs stay with the caller |
 | `EmptyState` / `ErrorState` / `Skeleton` | Shared vocabulary for vacancy, failure, loading |
@@ -315,7 +319,7 @@ Storybook as visual verification for every component state. One is a
 regression test: the hook must tolerate a `fixture` prop constructed inline on
 every render (see "Where AI was used").
 
-**Accessibility is enforced by CI in three layers**, each catching a class the
+**Accessibility is enforced by CI in four layers**, each catching a class the
 others structurally can't:
 
 1. **Token contrast** — `src/tokens/tokens.contrast.test.ts` parses
@@ -328,7 +332,17 @@ others structurally can't:
 2. **axe per story** — `pnpm test-storybook:ci` runs axe-core over every story
    in headless Chromium. The rendering-level complement to the maths above:
    opacity, stacking, missing labels.
-3. **Keyboard navigation** — `pnpm test:e2e`
+3. **axe on the assembled page** — `pnpm test:e2e`
+   ([e2e/a11y.spec.ts](e2e/a11y.spec.ts)) runs axe over the real dashboard,
+   light and dark, plus the loading skeleton. This is not a duplicate of
+   layer 2: a per-story audit has to switch off `landmark-one-main`,
+   `region`, `page-has-heading-one`, `document-title` and `html-has-lang`,
+   because one component on a bare page cannot satisfy them. Those five are
+   asserted here by name. Everything else it catches is composition —
+   duplicate `id`s once a table renders twelve of a component, a heading
+   level that jumps once panels stack, contrast that only fails over a wash
+   a parent applies.
+4. **Keyboard navigation** — `pnpm test:e2e`
    ([e2e/keyboard-nav.spec.ts](e2e/keyboard-nav.spec.ts)) walks the built app
    with real Tab presses. Seven tests pin: the **entire tab order** (role +
    accessible name per stop, read from Playwright's accessibility engine —

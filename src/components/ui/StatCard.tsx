@@ -8,7 +8,7 @@ export interface StatCardProps {
   label: ReactNode
   /** The headline value. Pre-formatted — the card does not format numbers. */
   value: ReactNode
-  /** Optional change indicator; compose a <DeltaChip> here. */
+  /** Optional change indicator; compose a <Delta> here. */
   delta?: ReactNode
   /** Optional footnote under the value: "trailing 15m". */
   hint?: ReactNode
