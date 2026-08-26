@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Architecture review for real-time-dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+    </script>
+    <style>
+      .seam { stroke-dasharray: 4 4; }
+      .leak { stroke: #dc2626; }
+      .deep { background: linear-gradient(135deg, #0f172a, #1e293b); }
+    </style>
+  </head>
+  <body class="bg-stone-50 text-slate-900 font-sans">
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+
+      <header class="space-y-3">
+        <h1 class="font-serif text-3xl">Architecture review · <span class="font-mono text-2xl">real-time-dashboard</span></h1>
+        <p class="text-sm text-slate-500">2026-08-25 · Matt Pocock <span class="font-mono">improve-codebase-architecture</span> · 4 candidates, 2 Strong</p>
+        <div class="flex flex-wrap gap-4 text-xs text-slate-600 items-center">
+          <span class="inline-flex items-center gap-1.5"><span class="inline-block w-4 h-3 border border-slate-400 bg-white"></span> module</span>
+          <span class="inline-flex items-center gap-1.5"><svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke="#475569" stroke-width="1.5" class="seam"/></svg> seam</span>
+          <span class="inline-flex items-center gap-1.5"><svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke="#dc2626" stroke-width="2"/></svg> leakage</span>
+          <span class="inline-flex items-center gap-1.5"><span class="inline-block w-4 h-3 deep rounded-sm"></span> deep module</span>
+        </div>
+        <p class="text-sm text-slate-700 max-w-3xl">Verdict: <strong>deepen, don't restructure.</strong> The feed lifecycle, DataTable, and the test-enforced token layer are already deep modules at real seams. The residual friction is one shallow module (<span class="font-mono text-xs">lib/domain.ts</span>) whose seam the panels leak across, and one implementation that creates its time dependency instead of accepting it.</p>
+      </header>
+
+      <section id="candidates" class="space-y-10">
+
+        <!-- Candidate 1 -->
+        <article id="feed-clock-seam" class="rounded-xl border border-slate-200 bg-white p-6 space-y-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h2 class="font-serif text-xl">Give the feed a clock seam</h2>
+            <div class="flex gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">Strong</span>
+              <span class="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">in-process</span>
+            </div>
+          </div>
+          <p class="font-mono text-sm text-slate-600">src/data/useDashboardFeed.ts · src/lib/useNow.ts · src/data/useDashboardFeed.test.ts</p>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-slate-200 p-4">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">Before</p>
+              <div class="relative space-y-2">
+                <div class="border border-slate-400 rounded p-2">
+                  <p class="text-xs uppercase tracking-wider">useDashboardFeed</p>
+                  <div class="mt-2 grid grid-cols-3 gap-1 text-[10px] text-center">
+                    <div class="border border-slate-300 rounded p-1">load effect</div>
+                    <div class="border border-slate-300 rounded p-1">tick effect</div>
+                    <div class="border border-red-400 text-red-700 rounded p-1">stale-clock effect</div>
+                  </div>
+                  <div class="mt-1 grid grid-cols-2 gap-1 text-[10px] text-center">
+                    <div class="border border-red-400 text-red-700 rounded p-1">staleTick state = "please re-render"</div>
+                    <div class="border border-red-400 text-red-700 rounded p-1">render → Date.now(), ref writes</div>
+                  </div>
+                </div>
+                <div class="border border-slate-400 rounded p-2 w-2/3">
+                  <p class="text-xs uppercase tracking-wider">useNow</p>
+                  <p class="text-[10px] text-slate-500">one consumer: FreshnessIndicator</p>
+                </div>
+                <p class="text-[11px] text-red-700">Two independent clocks; staleness re-derives only while paused/failing, an unstated invariant (staleAfterMs ≫ tickMs) widening the interface invisibly.</p>
+              </div>
+            </div>
+            <div class="rounded-lg border border-slate-200 p-4">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">After</p>
+              <div class="space-y-2">
+                <div class="deep text-white rounded p-2">
+                  <p class="text-xs uppercase tracking-wider">useDashboardFeed</p>
+                  <div class="mt-2 grid grid-cols-2 gap-1 text-[10px] text-center text-slate-300">
+                    <div class="border border-slate-500 rounded p-1">load effect</div>
+                    <div class="border border-slate-500 rounded p-1">tick effect</div>
+                  </div>
+                  <p class="mt-1 text-[10px] text-slate-300 text-center border-t border-dashed border-slate-500 pt-1">clock seam ┄┄ subscribes to shared store</p>
+                </div>
+                <div class="border border-slate-400 rounded p-2">
+                  <p class="text-xs uppercase tracking-wider">useNow store</p>
+                  <p class="text-[10px] text-slate-500">two consumers: FreshnessIndicator, useDashboardFeed · two adapters: real interval / fake timers</p>
+                </div>
+                <p class="text-[11px] text-emerald-700">Interface unchanged by one field; staleTick and render-time Date.now() deleted.</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-sm"><strong>Problem:</strong> the implementation creates wall-clock time instead of accepting it: the oxlint purity warnings the README lists first under Known gaps.</p>
+          <p class="text-sm"><strong>Solution:</strong> subscribe staleness to the existing <span class="font-mono text-xs">useNow</span> store (or accept <span class="font-mono text-xs">now()</span> via options); delete the third effect and <span class="font-mono text-xs">staleTick</span>.</p>
+          <ul class="text-sm list-disc pl-5 space-y-0.5">
+            <li>Locality: purity hazards removed in one module</li>
+            <li>Leverage: one clock, one more call site</li>
+            <li>Interface is the test surface: suite untouched</li>
+            <li>Seam is real: two adapters already exist</li>
+          </ul>
+        </article>
+
+        <!-- Candidate 2 -->
+        <article id="domain-triage-depth" class="rounded-xl border border-slate-200 bg-white p-6 space-y-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h2 class="font-serif text-xl">Deepen domain.ts into the triage module</h2>
+            <div class="flex gap-2">
+              <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">Strong</span>
+              <span class="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">in-process</span>
+            </div>
+          </div>
+          <p class="font-mono text-sm text-slate-600">src/lib/domain.ts · src/features/dashboard/QueuesPanel.tsx · src/features/dashboard/AgentsPanel.tsx</p>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-slate-200 p-4">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">Before: shallow (interface ≈ implementation)</p>
+              <div class="flex items-end gap-6 h-40">
+                <div class="flex flex-col items-center gap-1">
+                  <div class="w-24 border border-slate-400 bg-slate-100 rounded" style="height:56px"><p class="text-[10px] text-center pt-1">interface<br/>4 lookup Records</p></div>
+                  <div class="w-24 border border-slate-400 bg-white rounded" style="height:60px"><p class="text-[10px] text-center pt-1">implementation<br/>…the same Records</p></div>
+                  <p class="text-[10px] uppercase tracking-wider">domain.ts</p>
+                </div>
+                <div class="flex-1">
+                  <pre class="mermaid text-xs">
+flowchart TB
+  Q[QueuesPanel cells] -->|lateness rule| Q
+  Q -.->|raw text-risk-text| T[tokens]
+  A[AgentsPanel useMemos] -->|partition + sort| A
+  classDef leak stroke:#dc2626,stroke-width:2px;
+  class Q,A leak
+                  </pre>
+                </div>
+              </div>
+              <p class="text-[11px] text-red-700 mt-2">Worst-first rank, lateness-in-seconds, staffing pressure, adherence partition all live in anonymous renderers, reachable only through the DOM.</p>
+            </div>
+            <div class="rounded-lg border border-slate-200 p-4">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">After: deep (small interface, absorbed judgments)</p>
+              <div class="flex items-end gap-6 h-40">
+                <div class="flex flex-col items-center gap-1">
+                  <div class="w-24 border border-slate-500 bg-slate-100 rounded" style="height:28px"><p class="text-[10px] text-center pt-1">4 pure functions</p></div>
+                  <div class="w-24 deep text-white rounded" style="height:88px"><p class="text-[10px] text-center pt-2">lateness · worst-first<br/>staffing · partition<br/>+ lookup tables</p></div>
+                  <p class="text-[10px] uppercase tracking-wider">domain.ts</p>
+                </div>
+                <div class="flex-1">
+                  <pre class="mermaid text-xs">
+flowchart TB
+  D[domain.ts] --> Q[QueuesPanel]
+  D --> A[AgentsPanel]
+  D --> T[domain.test.ts]
+  Q --> I[intent seam]
+  classDef deep fill:#0f172a,color:#fff;
+  class D deep
+                  </pre>
+                </div>
+              </div>
+              <p class="text-[11px] text-emerald-700 mt-2">Fixtures in, facts out: no fake timers, no DOM. Stories and axe suites keep the calling side covered.</p>
+            </div>
+          </div>
+
+          <p class="text-sm"><strong>Problem:</strong> <span class="font-mono text-xs">domain.ts</span> claims the seam but is shallow; the README's flagship seconds-not-percent judgment exists only as an anonymous cell body, and <span class="font-mono text-xs">"0 free"</span> is painted with a raw token class that bypasses the intent seam.</p>
+          <p class="text-sm"><strong>Solution:</strong> move the judgments behind pure functions: <span class="font-mono text-xs">queueLateness</span>, <span class="font-mono text-xs">compareQueuesWorstFirst</span>, <span class="font-mono text-xs">staffingPressure</span>, <span class="font-mono text-xs">partitionAgents</span>; panels become composition and rendering.</p>
+          <ul class="text-sm list-disc pl-5 space-y-0.5">
+            <li>Locality: lateness rule fixed once, fixed everywhere</li>
+            <li>Leverage: one worst-first, three consumers</li>
+            <li>Interface becomes the test surface</li>
+            <li>Deletion test flips from fail to pass</li>
+          </ul>
+        </article>
+
+        <!-- Candidate 3 -->
+        <article id="banner-hypothetical-seam" class="rounded-xl border border-slate-200 bg-white p-6 space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h2 class="font-serif text-xl">Leave the Banner seam hypothetical</h2>
+            <span class="px-2 py-0.5 rounded text-xs font-medium bg-slate-200 text-slate-600">Speculative</span>
+          </div>
+          <p class="font-mono text-sm text-slate-600">src/features/dashboard/DashboardPage.tsx:58–75</p>
+          <div class="grid md:grid-cols-2 gap-4 text-[11px]">
+            <div class="rounded-lg border border-slate-200 p-3">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-2">Before</p>
+              <p>DashboardPage <span class="text-red-600 font-semibold">→ raw breach token classes</span> (bypasses intent seam)</p>
+            </div>
+            <div class="rounded-lg border border-slate-200 p-3">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-2">After (if touched at all)</p>
+              <p>DashboardPage → <span class="font-mono">INTENT_CLASSES['breach']</span> ┄ seam → tokens. No new module.</p>
+            </div>
+          </div>
+          <p class="text-sm"><strong>Problem:</strong> one banner in the app. One adapter = a hypothetical seam; a <span class="font-mono text-xs">Banner</span> module today would fail the deletion test.</p>
+          <p class="text-sm"><strong>Solution:</strong> don't mint the module. The honest half-step is routing colors through the intent seam.</p>
+          <ul class="text-sm list-disc pl-5 space-y-0.5">
+            <li>YAGNI: no shallow single-caller module</li>
+            <li>Banner coloring rides the contrast-tested seam</li>
+          </ul>
+        </article>
+
+        <!-- Candidate 4 -->
+        <article id="signed-format-depth" class="rounded-xl border border-slate-200 bg-white p-6 space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h2 class="font-serif text-xl">Return the sign policy to format.ts</h2>
+            <span class="px-2 py-0.5 rounded text-xs font-medium bg-slate-200 text-slate-600">Speculative</span>
+          </div>
+          <p class="font-mono text-sm text-slate-600">src/features/dashboard/SummaryRow.tsx:37,63 · src/lib/format.ts</p>
+          <div class="grid md:grid-cols-2 gap-4 text-[11px]">
+            <div class="rounded-lg border border-slate-200 p-3">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-2">Before</p>
+              <p>format.ts → Delta · <span class="text-red-600 font-semibold">two anonymous closures inside SummaryRow re-implement the true-minus (U+2212) policy</span>, invisible to format.test.ts</p>
+            </div>
+            <div class="rounded-lg border border-slate-200 p-3">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-2">After</p>
+              <p>format.ts exports <span class="font-mono">formatSigned(value, suffix)</span> → SummaryRow passes it through Delta's existing <span class="font-mono">format</span> seam → covered by format.test.ts</p>
+            </div>
+          </div>
+          <p class="text-sm"><strong>Problem:</strong> the typographic sign policy leaked back out of a deep little module to a call site no test can see.</p>
+          <p class="text-sm"><strong>Solution:</strong> one signed formatter in <span class="font-mono text-xs">format.ts</span>; SummaryRow uses the seam Delta already offers.</p>
+          <ul class="text-sm list-disc pl-5 space-y-0.5">
+            <li>Locality: true-minus policy in one module</li>
+            <li>Tests cover it for free; Delta's interface unchanged</li>
+          </ul>
+        </article>
+
+      </section>
+
+      <section id="top-recommendation" class="rounded-xl border-2 border-emerald-600 bg-emerald-50 p-6 space-y-2">
+        <p class="text-xs uppercase tracking-wider text-emerald-700">Top recommendation</p>
+        <h2 class="font-serif text-2xl"><a href="#feed-clock-seam" class="underline decoration-emerald-400">Give the feed a clock seam</a></h2>
+        <p class="text-sm max-w-3xl">It's the README's own stated first priority, it changes zero external interface, and the fake-timer suite already pins the module at exactly the seam the refactor must preserve: the rare refactor whose safety net is fully in place before you start. <a href="#domain-triage-depth" class="underline">Deepening domain.ts</a> is the better <em>story</em> (it turns the seconds-not-percent argument into tested code) but touches two feature modules; right second move, not the pre-walkthrough one.</p>
+      </section>
+
+    </main>
+  </body>
+</html>

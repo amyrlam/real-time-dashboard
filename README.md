@@ -11,9 +11,15 @@ page. Take-home for Assembled.
 is the source of truth for requirements. This README is the source of truth
 for everything else — what's here, why, and what isn't.
 
-There are deliberately no other docs. A `docs/PLAN.md` (the pre-build plan) and
-a `docs/previews.md` (one-time Vercel setup) both existed; their durable parts
-are folded in below and the rest is in git history. Second documents only drift.
+There are deliberately no other *living* docs. A `docs/PLAN.md` (the pre-build
+plan) and a `docs/previews.md` (one-time Vercel setup) both existed; their
+durable parts are folded in below and the rest is in git history. Second
+documents only drift. The one exception is [`docs/reviews/`](docs/reviews/):
+dated, frozen review reports from two external review passes
+([Matt Pocock's skills](docs/reviews/matt-pocock-review.md) and
+[Impeccable](docs/reviews/impeccable-review.md)), kept as snapshots feeding
+[If I had more time](#if-i-had-more-time) — they describe the repo at review
+time and are not updated with the code.
 
 ---
 
@@ -50,6 +56,12 @@ sort visibly reorders itself as it goes.
 > The file is internally consistent — `summary.agents_out_of_adherence` is 3
 > and three agents carry the status — so the data is right and the prose is
 > stale. The UI is built from the data.
+
+One derived addition on top of the file, since the brief invites it ("stub or
+extend it and just say what you added"): the fixture's `summary` carries no
+aggregate volume figure, so the summary row's "Volume vs forecast" card is
+computed in `src/lib/domain.ts` by summing the per-queue `volume_last_15m`
+against `volume_forecast_next_15m` (current snapshot: 300 vs 269, +12%).
 
 The page replays that feed on a timer to
 simulate live ticks. The **Demo controls** panel (bottom right) exists so every
@@ -213,7 +225,7 @@ The page is composition-only; every visual element is one of ~10 primitives in
 
 | Component | Role |
 |---|---|
-| `StatusBadge` | The single source of status color: tinted chip, dot + label (never color alone) |
+| `StatusBadge` | The home of status color: tinted chip, dot + label (never color alone) — [one documented exception](#known-gaps) |
 | `Delta` | Signed change; **polarity is a prop** (`polarity="lower-is-better"`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
 | `Duration` | Tabular-figure durations, `human` ("2m 55s") or `clock` ("2:55") |
 | `Sparkline` | Micro area chart with optional threshold line and hover tooltip |
@@ -300,7 +312,9 @@ executable, so most of this is enforced in CI rather than asserted here.
 - Every text token clears 4.5:1 against every surface it can actually render
   on; marks (status dots, sparkline strokes) clear the 3:1 non-text threshold.
 - Status is never carried by colour alone — `StatusBadge` always pairs the
-  colour with a text label and a dot.
+  colour with a text label and a dot. One caveat: the queues table's "0 free"
+  sub-label emphasizes an already-textual fact with colour + weight but no
+  mark ([known gap](#known-gaps)).
 
 **Keyboard**
 - One global `:focus-visible` rule in `src/index.css`, so every focusable
@@ -421,6 +435,7 @@ list a reviewer would otherwise have to find by poking.
 |---|---|
 | oxlint purity warnings | `useDashboardFeed` reads refs during render, calls `Date.now()` in render, and sets state in an effect. These are real React Compiler hazards, left visible rather than suppressed. |
 | `DataTable` incompatible-library warning | TanStack Table returns functions React Compiler can't memoize; flagged, not yet addressed. |
+| Small duplications (review-flagged) | A [Fowler-baseline review pass](docs/reviews/matt-pocock-review.md) flagged judgement-call smells: `SummaryRow` re-implements `format.ts`'s signed-number policy inline, `useDashboardFeed`'s tick effect duplicates `deliver`, a `failures: 99` sentinel, and `EmptyState`/`ErrorState` share an unextracted shell. Known, documented rather than churned. |
 
 **Scale**
 
@@ -438,6 +453,7 @@ Smaller observations from a props audit — known, not (yet) acted on:
 | `--color-focus` unused as a utility | The token is mapped into Tailwind but the focus ring comes from the raw `:focus-visible` rule; no utility class references it. |
 | `StatCard intent` is hue-only | Unlike `Duration`, the colored value gets no weight change. Both current uses pair the number with a label, so nothing is color-alone today — but the primitive doesn't enforce it. |
 | Hand-rolled disconnect banner | `DashboardPage` builds the reconnect banner from raw breach tokens instead of composing `ErrorState` — candidate for a `Banner` primitive if a second one appears. |
+| Staffing cell colors status ad hoc | `QueuesPanel`'s "0 free" sub-label turns amber (`text-risk-text` + `font-medium`) when a queue has no free agents — the one status color applied outside `StatusBadge`. The caveat: unlike the badge, this cue is carried by color and weight only, with no mark. The *fact* survives without color (the text literally says "0 free"), but the *urgency* doesn't. Ways to say it with more than color, in ascending weight: a leading intent-colored dot (the badge's own idiom, ~6px), a text prefix ("⚠ 0 free" or "0 free — none available" for screen readers), or an `intent`-typed `StatusText` primitive that standardizes dot + color + weight for inline text. A full badge is too heavy for an 11px sub-label, which is why the cell doesn't use one. |
 | `SimPanel` bypasses the system | Demo-only control panel, hand-rolled; a real deployment ships without it. |
 
 ## Where AI was used, and how it was verified
@@ -470,8 +486,18 @@ that plan is in git history. Verification was layered rather than trust-based:
 ## If I had more time
 
 Closing the [Known gaps](#known-gaps) comes first — starting with the
-`useDashboardFeed` purity warnings. Beyond fixing what's already broken, the
-things I'd *add*:
+`useDashboardFeed` purity warnings. Two external review passes are checked in
+under [`docs/reviews/`](docs/reviews/) as the concrete backlog:
+[Matt Pocock's skills](docs/reviews/matt-pocock-review.md) (two-axis code
+review + architecture deepening candidates, with a visual
+[architecture report](docs/reviews/architecture-review.html)) and
+[Impeccable](docs/reviews/impeccable-review.md) (critique 32/40, audit 18/20).
+Their top items: a clock seam for `useDashboardFeed` (subsumes the purity
+warnings), deepening `domain.ts` into tested triage functions (which would
+also fix the worst-first tie-break and map queue IDs to names in the agents
+table), and quieting the per-second `role="status"` tick. (Their fourth item —
+a headline presence for "volume vs forecast" — is closed: the summary row now
+derives one.) Beyond fixing what's already known, the things I'd *add*:
 
 - **StyleX exploration**: the semantic-token layer (CSS variables) could be
   ported to StyleX `defineVars` for typed, compiler-enforced tokens — a
