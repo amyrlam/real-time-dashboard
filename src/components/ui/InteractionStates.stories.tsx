@@ -119,6 +119,12 @@ const meta = {
         ].join('\n'),
       },
     },
+    // Desktop snapshot only, overriding the global phone/tablet/desktop set:
+    // this is a reference sheet with a fixed four-column grid, not a
+    // responsive surface — at 375px the triptych collapses into nonsense.
+    // The components shown here have their own stories covered at all
+    // three widths.
+    chromatic: { viewports: [1280] },
     // Scoped so the mini table forces one state per element kind (the sorted
     // header, the first row, one sort button) instead of every match at once.
     //
@@ -151,68 +157,72 @@ type Story = StoryObj
 
 export const Overview: Story = {
   render: () => (
-    <div className="flex max-w-3xl flex-col">
-      <ColumnHeadings />
+    // The min-w inner keeps the triptych's shape on narrow screens — the
+    // outer container scrolls it rather than letting the grid crush.
+    <div className="overflow-x-auto">
+      <div className="flex max-w-3xl min-w-2xl flex-col">
+        <ColumnHeadings />
 
-      <StateRow
-        label="Secondary button"
-        note="ErrorState retry, sim controls, page header actions"
-      >
-        <button
-          type="button"
-          className="rounded-md border border-line-strong bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:bg-hover"
+        <StateRow
+          label="Secondary button"
+          note="ErrorState retry, sim controls, page header actions"
         >
-          Retry
-        </button>
-      </StateRow>
-
-      <StateRow
-        label="Inline trigger"
-        note="AgentsPanel roster disclosure (Base UI Collapsible)"
-      >
-        <button
-          type="button"
-          className="rounded-md px-1.5 py-0.5 text-xs font-medium text-accent-text hover:bg-hover"
-        >
-          Show all
-        </button>
-      </StateRow>
-
-      <StateRow
-        label="Panel disclosure"
-        note="SimPanel “Demo controls” header (Base UI Collapsible)"
-      >
-        <div className="max-w-56 rounded-lg border border-line bg-surface">
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold text-ink-secondary hover:bg-hover focus-visible:-outline-offset-2"
+            className="rounded-md border border-line-strong bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:bg-hover"
           >
-            Demo controls
-            <span aria-hidden className="text-ink-muted">
-              ▴
-            </span>
+            Retry
           </button>
-        </div>
-      </StateRow>
+        </StateRow>
 
-      <StateRow
-        label="Range input"
-        note="SimPanel replay scrubber — native control, accent-tinted"
-      >
-        <input
-          type="range"
-          defaultValue={40}
-          className="w-full max-w-56 accent-(--t-accent)"
-          aria-label="Replay tick"
-        />
-      </StateRow>
+        <StateRow
+          label="Inline trigger"
+          note="AgentsPanel roster disclosure (Base UI Collapsible)"
+        >
+          <button
+            type="button"
+            className="rounded-md px-1.5 py-0.5 text-xs font-medium text-accent-text hover:bg-hover"
+          >
+            Show all
+          </button>
+        </StateRow>
 
-      <StateRow
-        label="DataTable"
-        note="Hover column: sorted-header wash + first-row reading aid. Focus column: the ring on a sort button."
-      >
-        <MiniTable />
-      </StateRow>
+        <StateRow
+          label="Panel disclosure"
+          note="SimPanel “Demo controls” header (Base UI Collapsible)"
+        >
+          <div className="max-w-56 rounded-lg border border-line bg-surface">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold text-ink-secondary hover:bg-hover focus-visible:-outline-offset-2"
+            >
+              Demo controls
+              <span aria-hidden className="text-ink-muted">
+                ▴
+              </span>
+            </button>
+          </div>
+        </StateRow>
+
+        <StateRow
+          label="Range input"
+          note="SimPanel replay scrubber — native control, accent-tinted"
+        >
+          <input
+            type="range"
+            defaultValue={40}
+            className="w-full max-w-56 accent-(--t-accent)"
+            aria-label="Replay tick"
+          />
+        </StateRow>
+
+        <StateRow
+          label="DataTable"
+          note="Hover column: sorted-header wash + first-row reading aid. Focus column: the ring on a sort button."
+        >
+          <MiniTable />
+        </StateRow>
+      </div>
     </div>
   ),
 }
