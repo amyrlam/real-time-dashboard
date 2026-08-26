@@ -31,7 +31,7 @@ Everything else held: intents-not-domain-values everywhere (`domain.ts` the only
 - *Adherence "2 vs 3":* verified — the fixture's `summary.agents_out_of_adherence` is 3 with three matching agents; the brief prose ("two agents") is stale. Building from data is the defensible call; the README documents it correctly.
 - *Worst-first tie-break:* real, verified in the fixture. `QueuesPanel` sorts solely by `SLA_STATUS_RANK`; TanStack's stable sort preserves fixture order within a tier, so Billing (55s over target) renders above Live Chat (80s over) — contradicting the README's own seconds-not-percent argument. A secondary key (seconds over target, desc) inside a `compareQueuesWorstFirst` would fix it.
 
-**(d) Brief-alignment scorecard.** ① Component API/reuse: strong. ② States & polish: strong; docked for the hidden volume column at narrow widths. ③ Tokens/theming: strongest axis. ④ Product thinking: weakest axis — one mandated question lacks headline presence, and the centerpiece ordering contradicts its own argument within a tier. ⑤ AI taste & judgment: strong (concrete verification narrative, self-reported gaps).
+**(d) Brief-alignment scorecard.** ① Component API/reuse: strong. ② States & polish: strong; docked for the hidden volume column at narrow widths. ③ Tokens/theming: strongest axis. ④ Product thinking: weakest axis — one mandated question lacks headline presence, and the centerpiece ordering contradicts its own argument within a tier. ⑤ AI taste & judgment: strong (concrete verification narrative, self-reported gaps). *(Post-review: the volume-headline half of ④ — and ②'s dock — were closed by the derived summary-row card; the worst-first tie-break half of ④ remains open.)*
 
 ## Architecture axis
 
