@@ -32,7 +32,7 @@ export const WithDelta: Story = {
     delta: (
       <Delta
         value={8}
-        positiveIsGood={false}
+        polarity="lower-is-better"
         format={(v) => `+${v}`}
         srLabel="since last tick"
       />

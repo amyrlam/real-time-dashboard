@@ -14,7 +14,9 @@ export function SimPanel({ feed }: { feed: DashboardFeed }) {
   return (
     <aside
       aria-label="Demo controls"
-      className="fixed right-4 bottom-4 z-20 w-64 rounded-lg border border-line bg-surface shadow-overlay"
+      // Floats over the page on desktop; on phone widths it docks into the
+      // page flow after the panels instead of hovering over dead space.
+      className="fixed right-4 bottom-4 z-20 w-64 rounded-lg border border-line bg-surface shadow-overlay max-sm:static max-sm:w-full max-sm:shadow-raised"
     >
       <button
         type="button"

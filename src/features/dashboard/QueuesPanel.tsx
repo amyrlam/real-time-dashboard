@@ -79,6 +79,7 @@ export function QueuesPanel({ queues, loading }: QueuesPanelProps) {
         id: 'trend',
         header: 'Wait trend',
         enableSorting: false,
+        meta: { hideBelow: 'md' },
         cell: (info) => {
           const q = info.row.original
           return (
@@ -97,7 +98,7 @@ export function QueuesPanel({ queues, loading }: QueuesPanelProps) {
       col.accessor('tickets_waiting', {
         id: 'waiting',
         header: 'Waiting',
-        meta: { align: 'end' },
+        meta: { align: 'end', hideBelow: 'sm' },
         cell: (info) => (
           <span className="tabular-nums text-ink">{info.getValue()}</span>
         ),
@@ -106,7 +107,7 @@ export function QueuesPanel({ queues, loading }: QueuesPanelProps) {
         id: 'staffing',
         header: 'Agents',
         enableSorting: false,
-        meta: { align: 'end' },
+        meta: { align: 'end', hideBelow: 'md' },
         cell: (info) => {
           const q = info.row.original
           return (
@@ -130,14 +131,14 @@ export function QueuesPanel({ queues, loading }: QueuesPanelProps) {
       col.accessor('volume_vs_forecast_pct', {
         id: 'volume',
         header: 'Volume vs forecast',
-        meta: { align: 'end' },
+        meta: { align: 'end', hideBelow: 'sm' },
         cell: (info) => {
           const q = info.row.original
           return (
             <div className="flex flex-col items-end">
               <Delta
                 value={q.volume_vs_forecast_pct}
-                positiveIsGood={false}
+                polarity="lower-is-better"
                 quietBand={10}
                 srLabel="vs forecast"
               />

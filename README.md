@@ -214,7 +214,7 @@ The page is composition-only; every visual element is one of ~10 primitives in
 | Component | Role |
 |---|---|
 | `StatusBadge` | The single source of status color: tinted chip, dot + label (never color alone) |
-| `Delta` | Signed change; **polarity is a prop** (`positiveIsGood`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
+| `Delta` | Signed change; **polarity is a prop** (`polarity="lower-is-better"`) — +25% volume is bad, +25% attainment is good — with a `quietBand` |
 | `Duration` | Tabular-figure durations, `human` ("2m 55s") or `clock` ("2:55") |
 | `Sparkline` | Micro area chart with optional threshold line and hover tooltip |
 | `StatCard` | One headline number; composes `Delta`, has a matching skeleton |
@@ -235,6 +235,17 @@ API principles, applied consistently:
   colors (consistency is the point), no `onClick` on `StatCard` (it's a
   reading surface), no pagination on `DataTable` (an ops page shows the floor,
   not page 2 of it).
+- **Exactly one component has `className`: `Skeleton`.** A skeleton *is* a
+  shape, so utility classes (`h-4 w-24`, `size-8 rounded-full`) are its
+  natural API. Every other primitive renders one way everywhere — status
+  color can't be painted over, and placement belongs to the parent layout
+  (the page's own grid/flex wrappers), not to a pass-through prop.
+- **Renames are cheap early; ambiguity is expensive forever.** `Delta`'s
+  polarity prop began as `positiveIsGood?: boolean` and was renamed to
+  `polarity: 'higher-is-better' | 'lower-is-better'` — "positive" read as the
+  value's sign as easily as the metric's direction, and the common call site
+  was a double negative (`positiveIsGood={false}`). The enum also leaves room
+  for a valence-free `'none'` without a second boolean.
 
 ## Tokens and theming
 
@@ -390,7 +401,7 @@ list a reviewer would otherwise have to find by poking.
 
 | Gap | Detail |
 |---|---|
-| No visual regression | Nothing here would catch a purely visual break — wrong spacing, a broken layout, a colour that changed but still passes contrast. The largest single hole in the setup. |
+| Visual regression reviews are manual | Chromatic runs in CI — every story, including the assembled `Pages/Dashboard`, snapshots at 375/768/1280px against accepted baselines. The remaining softness: diffs don't fail the build (`exitZeroOnChanges`), so a visual change ships unless someone reviews it in Chromatic. |
 | Primitives have no unit tests | Unit coverage is the feed state machine, the formatters, and the tokens. Component behaviour is verified through Storybook plus the two a11y suites, which is deliberate at this size but wouldn't scale. |
 | E2E is Chromium-only | One browser, one viewport. No Firefox or WebKit. |
 
@@ -406,6 +417,18 @@ list a reviewer would otherwise have to find by poking.
 | Gap | Detail |
 |---|---|
 | No row virtualization | Fine for 6 queues and 13 agents; a floor of hundreds of agents would need it. |
+
+**API review notes**
+
+Smaller observations from a props audit — known, not (yet) acted on:
+
+| Note | Detail |
+|---|---|
+| Unused API surface | `StatusBadge size="md"` (the default), `EmptyState size="default"`, and `ErrorState size="compact"` have no in-app call sites — fine for a system, worth knowing when reading coverage. |
+| `--color-focus` unused as a utility | The token is mapped into Tailwind but the focus ring comes from the raw `:focus-visible` rule; no utility class references it. |
+| `StatCard intent` is hue-only | Unlike `Duration`, the colored value gets no weight change. Both current uses pair the number with a label, so nothing is color-alone today — but the primitive doesn't enforce it. |
+| Hand-rolled disconnect banner | `DashboardPage` builds the reconnect banner from raw breach tokens instead of composing `ErrorState` — candidate for a `Banner` primitive if a second one appears. |
+| `SimPanel` bypasses the system | Demo-only control panel, hand-rolled; a real deployment ships without it. |
 
 ## Where AI was used, and how it was verified
 
@@ -436,9 +459,9 @@ that plan is in git history. Verification was layered rather than trust-based:
 
 ## If I had more time
 
-Closing the [Known gaps](#known-gaps) comes first — in that order:
-`prefers-reduced-motion`, then visual regression, then the `useDashboardFeed`
-purity warnings. Beyond fixing what's already broken, the things I'd *add*:
+Closing the [Known gaps](#known-gaps) comes first — starting with the
+`useDashboardFeed` purity warnings. Beyond fixing what's already broken, the
+things I'd *add*:
 
 - **StyleX exploration**: the semantic-token layer (CSS variables) could be
   ported to StyleX `defineVars` for typed, compiler-enforced tokens — a

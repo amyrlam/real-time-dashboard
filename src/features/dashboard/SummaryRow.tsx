@@ -33,7 +33,7 @@ export function SummaryRow({ summary, previous, loading }: SummaryRowProps) {
           attainmentDelta !== null && attainmentDelta !== 0 ? (
             <Delta
               value={attainmentDelta}
-              positiveIsGood
+              polarity="higher-is-better"
               format={(v) => `${v > 0 ? '+' : '−'}${Math.abs(Math.round(v))}pt`}
               srLabel="since last tick"
             />
@@ -59,7 +59,7 @@ export function SummaryRow({ summary, previous, loading }: SummaryRowProps) {
           waitingDelta !== null && waitingDelta !== 0 ? (
             <Delta
               value={waitingDelta}
-              positiveIsGood={false}
+              polarity="lower-is-better"
               format={(v) => `${v > 0 ? '+' : '−'}${Math.abs(Math.round(v))}`}
               srLabel="since last tick"
             />

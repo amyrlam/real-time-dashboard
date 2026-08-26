@@ -16,7 +16,8 @@
     "serve-storybook": "http-server storybook-static --port 6006 --silent",
     "test-storybook": "test-storybook --url http://localhost:6006",
     "test-storybook:ci": "start-server-and-test serve-storybook http://localhost:6006 test-storybook",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "chromatic": "chromatic --exit-zero-on-changes"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -41,12 +42,14 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "axe-playwright": "^2.2.2",
+    "chromatic": "^18.5.0",
     "http-server": "^14.1.1",
     "jsdom": "^30.0.1",
     "oxlint": "^1.75.0",
     "playwright": "^1.62.1",
     "start-server-and-test": "^3.0.12",
     "storybook": "^10.5.10",
+    "storybook-addon-pseudo-states": "^10.5.10",
     "typescript": "~6.0.2",
     "vite": "^8.2.0",
     "vitest": "^4.1.11"

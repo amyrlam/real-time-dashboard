@@ -14,6 +14,24 @@
  *      components only ever use semantic utilities (`bg-surface`, `text-ink-muted`,
  *      `text-status-breached-text`, …) and stay theme-agnostic for free.
  *
+ * Naming grammar — family first, member second (big-endian, like an ISO
+ * date): the first segment names the set that is maintained or swapped as a
+ * unit, the last names the member within it. `--t-bg-page` is the elevations
+ * family's "page"; `--t-healthy-accent` is the healthy family's mark color.
+ * Concept before property also matches the token-taxonomy convention
+ * (namespace → concept → property) and the W3C Design Tokens Community
+ * Group spec's guidance on group/token structure (first stable release,
+ * 2025.10 — the spec standardizes a JSON interchange format; these CSS
+ * custom properties are the runtime layer, and the same names would carry
+ * into a `.tokens.json` export unchanged). Deliberately NOT role-first
+ * (`--t-accent-healthy`): that would read as a member of the *interactive*
+ * `--t-accent` family — merging the two vocabularies this file works
+ * hardest to keep apart — and would scatter a status family's four roles
+ * across the file, when the realistic edit ("rebrand at-risk", "add a fifth
+ * status") is one adjacent block. The name also resolves in the same order
+ * as the code: components take an `intent`, then pick a role
+ * (`INTENT_CLASSES[intent].surface`).
+ *
  * Status colors are reserved for state (healthy / at-risk / breached / info /
  * neutral) and are never used as chart-series or decorative colors. Each status
  * ships four roles:

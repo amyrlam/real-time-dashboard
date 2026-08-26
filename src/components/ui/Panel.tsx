@@ -11,7 +11,6 @@ export interface PanelProps {
   /** Set false when the body manages its own edge (e.g. a full-bleed table). */
   padded?: boolean
   children: ReactNode
-  className?: string
 }
 
 /**
@@ -24,16 +23,10 @@ export function Panel({
   actions,
   padded = true,
   children,
-  className,
 }: PanelProps) {
   return (
-    <section
-      className={cn(
-        'flex min-w-0 flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-raised',
-        className,
-      )}
-    >
-      {(title || actions) && (
+    <section className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-raised">
+      {(title || subtitle || actions) && (
         <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line px-4 py-3">
           <div className="min-w-0">
             {title && (

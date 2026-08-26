@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { FeedStatus } from '../components/ui/FreshnessIndicator'
+import type { FeedStatus } from '../lib/types'
 import type { DashboardFixture, DashboardFrame } from '../lib/types'
 
 export interface DashboardFeedOptions {

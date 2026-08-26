@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { EmptyState } from './EmptyState'
 import { ErrorState } from './ErrorState'
-import { Skeleton } from './Skeleton'
 
 const meta = {
   title: 'Primitives/States',
@@ -43,13 +42,22 @@ export const ErrorWithRetry: Story = {
   ),
 }
 
-export const SkeletonBlocks: Story = {
+/**
+ * The Retry button's hover state, forced via the pseudo-states addon. Its
+ * focus treatment is the global `:focus-visible` ring (`src/index.css`) —
+ * components don't own focus styles — shown here on the same button.
+ */
+export const RetryInteractionStates: Story = {
   args: { title: '' },
+  parameters: {
+    pseudo: { hover: ['button'], focusVisible: ['button'] },
+  },
   render: () => (
-    <div className="flex flex-col gap-2 p-4">
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-7 w-16" />
-      <Skeleton className="h-4 w-full" />
-    </div>
+    <ErrorState
+      title="Couldn't load queue data"
+      description="The metrics feed didn’t respond."
+      onRetry={() => {}}
+    />
   ),
 }
+

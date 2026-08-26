@@ -33,6 +33,10 @@ const preview: Preview = {
   ],
   parameters: {
     layout: 'fullscreen',
+    // Chromatic snapshots every story at phone / tablet / desktop widths, so
+    // visual regression covers responsive behavior, not just the default
+    // viewport. No-op unless a CHROMATIC_PROJECT_TOKEN is configured.
+    chromatic: { viewports: [375, 768, 1280] },
     controls: {
       matchers: {
         color: /(background|color)$/i,

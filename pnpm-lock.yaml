@@ -69,6 +69,9 @@ importers:
       axe-playwright:
         specifier: ^2.2.2
         version: 2.2.2(playwright@1.62.1)
+      chromatic:
+        specifier: ^18.5.0
+        version: 18.5.0
       http-server:
         specifier: ^14.1.1
         version: 14.1.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
@@ -87,6 +90,9 @@ importers:
       storybook:
         specifier: ^10.5.10
         version: 10.5.10(@types/react@19.2.18)(react@19.2.8)
+      storybook-addon-pseudo-states:
+        specifier: ^10.5.10
+        version: 10.5.10(storybook@10.5.10(@types/react@19.2.18)(react@19.2.8))
       typescript:
         specifier: ~6.0.2
         version: 6.0.3
@@ -2073,6 +2079,22 @@ packages:
     resolution: {integrity: sha512-Pj779qHxV2tuapviy1bSZNEL1maXr13bPYpsvSDB68HlYcYuhlDrmGd63i0JHMCLKzc7rUSNIrpdJlhVlNwrxA==}
     engines: {node: '>= 0.8.0'}
 
+  chromatic@18.5.0:
+    resolution: {integrity: sha512-3oBcGP4V+6SV0qu2NJnutnPYsrxnPpOHhtQAbzxEtIQrDJNzn1wfXtzwkEiJGQm5eANTW0AvL4WxHtz+BTJbYg==}
+    engines: {node: '>=22.0.0'}
+    hasBin: true
+    peerDependencies:
+      '@chromatic-com/cypress': ^0.*.* || ^1.0.0
+      '@chromatic-com/playwright': ^0.*.* || ^1.0.0
+      '@chromatic-com/vitest': ^0.*.* || ^1.0.0
+    peerDependenciesMeta:
+      '@chromatic-com/cypress':
+        optional: true
+      '@chromatic-com/playwright':
+        optional: true
+      '@chromatic-com/vitest':
+        optional: true
+
   ci-info@4.4.0:
     resolution: {integrity: sha512-77PSwercCZU2Fc4sX94eF8k8Pxte6JAwL4/ICZLFjJLqegs7kCuAsqqj/70NQF6TvDpgFjkubQB2FW2ZZddvQg==}
     engines: {node: '>=8'}
@@ -3670,6 +3692,11 @@ packages:
 
   std-env@4.2.0:
     resolution: {integrity: sha512-oCUKSupKTHX53EyjDtuZQ64pjLJ6yYCtpmEw0goYxtjG9KpbRe8KAsl2tBUGU9DyMcJ0RwJ8GqJAFzMXcXW1Rw==}
+
+  storybook-addon-pseudo-states@10.5.10:
+    resolution: {integrity: sha512-gBBGK0EouiWtYDvRBXLzMM8GSKERRsV+UvGFBJpVoYiq7DwsZqQARnvFitJhyWsZCZuxzHFsxOxt/HiTb5i4VQ==}
+    peerDependencies:
+      storybook: ^10.5.10
 
   storybook@10.5.10:
     resolution: {integrity: sha512-Rz8k9ejFHsi7lbtJTaxZlhCUz4GkbJIKEoKDjXeLfr/ZhXip73E6keKxW0KH8iGeKiCqHAbJCV4YIQrxTOLiig==}
@@ -5897,6 +5924,10 @@ snapshots:
 
   check-more-types@2.24.0: {}
 
+  chromatic@18.5.0:
+    dependencies:
+      semver: 7.8.5
+
   ci-info@4.4.0: {}
 
   cjs-module-lexer@2.2.1: {}
@@ -7703,6 +7734,10 @@ snapshots:
       - supports-color
 
   std-env@4.2.0: {}
+
+  storybook-addon-pseudo-states@10.5.10(storybook@10.5.10(@types/react@19.2.18)(react@19.2.8)):
+    dependencies:
+      storybook: 10.5.10(@types/react@19.2.18)(react@19.2.8)
 
   storybook@10.5.10(@types/react@19.2.18)(react@19.2.8):
     dependencies:
