@@ -42,6 +42,4 @@ export const ErrorWithRetry: Story = {
   ),
 }
 
-// The Retry button's hover and focus treatments are shown, forced, in
-// Foundation → Interaction states, alongside every other interactive element.
 

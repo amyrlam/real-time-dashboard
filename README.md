@@ -244,9 +244,7 @@ API principles, applied consistently:
   wash on hover (`bg-hover`) purely to help the eye track one line across a
   wide table — rows aren't clickable and don't pretend to be: the pointer
   cursor appears only on real controls (sort headers, buttons, disclosures).
-  This is the one deliberate exception to "hover means interactive"; the full
-  hover/focus vocabulary is shown, forced via the pseudo-states addon, on
-  Storybook's *Foundation → Interaction states* page.
+  This is the one deliberate exception to "hover means interactive".
 - **Renames are cheap early; ambiguity is expensive forever.** `Delta`'s
   polarity prop began as `positiveIsGood?: boolean` and was renamed to
   `polarity: 'higher-is-better' | 'lower-is-better'` — "positive" read as the
