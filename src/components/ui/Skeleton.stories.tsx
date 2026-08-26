@@ -4,6 +4,16 @@ import { Skeleton } from './Skeleton'
 const meta = {
   title: 'Primitives/Skeleton',
   component: Skeleton,
+  // Skeletons always render inside a panel or card in the app, so stories
+  // present them on bg-surface — on the page background, sunken-on-page is
+  // (correctly) almost invisible.
+  decorators: [
+    (Story) => (
+      <div className="w-64 rounded-lg border border-line bg-surface p-4">
+        <Story />
+      </div>
+    ),
+  ],
   parameters: {
     docs: {
       description: {
@@ -39,7 +49,7 @@ export const Playground: Story = {
 export const Silhouette: Story = {
   args: { className: 'h-4 w-24' },
   render: () => (
-    <div className="flex w-48 flex-col gap-2 rounded-lg border border-line bg-surface p-4">
+    <div className="flex flex-col gap-2">
       <Skeleton className="h-3 w-24" />
       <Skeleton className="my-1 h-7 w-16" />
       <Skeleton className="h-3 w-32" />
