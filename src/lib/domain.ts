@@ -4,7 +4,7 @@
  * `Intent`. New domain concepts get mapped here, not inside components.
  */
 import type { Intent } from '../components/ui/intent'
-import type { AgentState, SlaStatus } from './types'
+import type { AgentState, QueueSnapshot, SlaStatus } from './types'
 
 export const SLA_STATUS_INTENT: Record<SlaStatus, Intent> = {
   healthy: 'healthy',
@@ -36,4 +36,25 @@ export const AGENT_STATE_INTENT: Record<AgentState, Intent> = {
   on_break: 'neutral',
   in_meeting: 'neutral',
   offline: 'neutral',
+}
+
+/**
+ * Floor-level volume vs forecast, derived by summing the per-queue figures —
+ * the fixture's `summary` carries no aggregate, and the brief invites
+ * deriving what the design needs. Null when there's nothing to divide by.
+ */
+export function volumeVsForecast(
+  queues: QueueSnapshot[],
+): { actual: number; forecast: number; pct: number } | null {
+  const actual = queues.reduce((sum, q) => sum + q.volume_last_15m, 0)
+  const forecast = queues.reduce(
+    (sum, q) => sum + q.volume_forecast_next_15m,
+    0,
+  )
+  if (forecast === 0) return null
+  return {
+    actual,
+    forecast,
+    pct: Math.round(((actual - forecast) / forecast) * 100),
+  }
 }
