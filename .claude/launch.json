@@ -9,9 +9,10 @@
     },
     {
       "name": "storybook",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["storybook", "--no-open"],
-      "port": 6006
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "pnpm exec storybook dev -p \"$PORT\" --ci --no-open"],
+      "port": 6006,
+      "autoPort": true
     }
   ]
 }

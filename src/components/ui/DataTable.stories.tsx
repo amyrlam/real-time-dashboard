@@ -78,8 +78,10 @@ const meta = {
           'checked at WCAG AA in both themes by `tokens.contrast.test.ts`.',
           '',
           'Each table also requires an `ariaLabel`, sortable headers carry',
-          '`aria-sort`, and sort toggles are real buttons — keyboard-operable',
-          'with the global focus ring.',
+          '`aria-sort`, and sort toggles are real buttons that fill the whole',
+          'header cell (the AG Grid hit-target pattern) — keyboard-operable',
+          'with the global focus ring. Hover and focus treatments are shown,',
+          'forced, in *Foundation → Interaction states*.',
           '',
           '### Narrow viewports',
           '',
@@ -134,31 +136,6 @@ export const RowIntent: Story = {
       getRowId={(r) => r.id}
       rowIntent={(r) => (r.status === 'down' ? 'breach' : undefined)}
       initialSorting={[{ id: 'waiting', desc: true }]}
-    />
-  ),
-}
-
-/**
- * Interaction states, forced via the pseudo-states addon: the first body row
- * shows its `hover:bg-hover` wash, the Status header its `hover:text-ink`
- * lift, and the Queue header's sort button the focus ring. Focus styling is
- * not per-component — one global `:focus-visible` rule (`src/index.css`)
- * paints the same 2px `--t-focus-ring` outline on every focusable element,
- * so this story demonstrates the global contract, not table-specific CSS.
- */
-export const InteractionStates: Story = {
-  parameters: {
-    pseudo: {
-      hover: ['tbody tr:first-child', 'th:nth-child(2) button'],
-      focusVisible: ['th:first-child button'],
-    },
-  },
-  render: () => (
-    <DataTable
-      columns={columns}
-      data={rows}
-      ariaLabel="Demo queues"
-      getRowId={(r) => r.id}
     />
   ),
 }

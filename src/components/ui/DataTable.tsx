@@ -105,11 +105,22 @@ export function DataTable<TData>({
                     )}
                   >
                     {canSort ? (
+                      // Negative margins cancel the cell padding, so the
+                      // button's hit target and hover wash cover the whole
+                      // header cell (the AG Grid pattern) while the label
+                      // stays on the cell's text grid. The bg wash — not a
+                      // text lift — is what keeps hover visible on a sorted
+                      // header, which is already at full-ink. Full-bleed
+                      // targets sit flush against clipping edges (the
+                      // overflow-x scroller, a panel's rounded overflow-
+                      // hidden), so the focus ring draws inward — same ring,
+                      // negative offset — instead of being cut off.
                       <button
                         type="button"
                         onClick={header.column.getToggleSortingHandler()}
                         className={cn(
-                          'inline-flex items-center gap-1 rounded-sm hover:text-ink',
+                          '-mx-3 -my-2 flex w-[calc(100%+1.5rem)] items-center gap-1 rounded-sm px-3 py-2 hover:bg-hover hover:text-ink focus-visible:-outline-offset-2',
+                          meta?.align === 'end' && 'justify-end',
                           sorted && 'text-ink',
                         )}
                       >

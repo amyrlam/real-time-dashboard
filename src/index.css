@@ -80,6 +80,15 @@
     outline-offset: 2px;
   }
 
+  /* Tailwind v4's preflight keeps the native `cursor: default` on buttons.
+     Here every hover affordance is a quiet background wash, so the pointer
+     is the second cue that something is clickable (sortable headers,
+     disclosures) — and its absence marks read-only surfaces. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
   /*
    * Honour the OS "reduce motion" setting. This page is designed to sit open
    * on a second monitor all morning, and the FreshnessIndicator's "live" dot

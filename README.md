@@ -240,6 +240,13 @@ API principles, applied consistently:
   natural API. Every other primitive renders one way everywhere — status
   color can't be painted over, and placement belongs to the parent layout
   (the page's own grid/flex wrappers), not to a pass-through prop.
+- **Row hover is a reading aid, not an affordance.** `DataTable` body rows
+  wash on hover (`bg-hover`) purely to help the eye track one line across a
+  wide table — rows aren't clickable and don't pretend to be: the pointer
+  cursor appears only on real controls (sort headers, buttons, disclosures).
+  This is the one deliberate exception to "hover means interactive"; the full
+  hover/focus vocabulary is shown, forced via the pseudo-states addon, on
+  Storybook's *Foundation → Interaction states* page.
 - **Renames are cheap early; ambiguity is expensive forever.** `Delta`'s
   polarity prop began as `positiveIsGood?: boolean` and was renamed to
   `polarity: 'higher-is-better' | 'lower-is-better'` — "positive" read as the
@@ -298,6 +305,9 @@ executable, so most of this is enforced in CI rather than asserted here.
 **Keyboard**
 - One global `:focus-visible` rule in `src/index.css`, so every focusable
   element gets the same visible ring; the ring colour itself clears 3:1.
+  Full-bleed targets (sort headers, the SimPanel header) flip the ring's
+  offset negative so it draws inward — the adjacent scroll container or
+  rounded panel would otherwise clip it.
 - Every interactive element is a native `<button>` / `<input>` — no
   `div`-with-`onClick`, so activation, focus, and Enter/Space come from the
   platform rather than from re-implemented handlers.
