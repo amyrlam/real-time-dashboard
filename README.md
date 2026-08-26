@@ -235,12 +235,11 @@ API principles, applied consistently:
   colors (consistency is the point), no `onClick` on `StatCard` (it's a
   reading surface), no pagination on `DataTable` (an ops page shows the floor,
   not page 2 of it).
-- **`className` follows a line, not a habit.** Layout primitives (`Panel`,
-  `StatCard`, `EmptyState`, `ErrorState`, `Skeleton`) accept `className` for
-  grid placement and sizing; data-semantic primitives (`Delta`, `Duration`,
-  `StatusBadge`, `Sparkline`, `FreshnessIndicator`, and `DataTable` — which
-  owns its layout and always lives inside a `Panel`) don't — their whole
-  value is rendering the same way everywhere.
+- **Exactly one component has `className`: `Skeleton`.** A skeleton *is* a
+  shape, so utility classes (`h-4 w-24`, `size-8 rounded-full`) are its
+  natural API. Every other primitive renders one way everywhere — status
+  color can't be painted over, and placement belongs to the parent layout
+  (the page's own grid/flex wrappers), not to a pass-through prop.
 - **Renames are cheap early; ambiguity is expensive forever.** `Delta`'s
   polarity prop began as `positiveIsGood?: boolean` and was renamed to
   `polarity: 'higher-is-better' | 'lower-is-better'` — "positive" read as the

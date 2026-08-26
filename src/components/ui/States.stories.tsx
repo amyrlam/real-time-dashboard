@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { EmptyState } from './EmptyState'
 import { ErrorState } from './ErrorState'
-import { Skeleton } from './Skeleton'
 
 const meta = {
   title: 'Primitives/States',
@@ -62,13 +61,3 @@ export const RetryInteractionStates: Story = {
   ),
 }
 
-export const SkeletonBlocks: Story = {
-  args: { title: '' },
-  render: () => (
-    <div className="flex flex-col gap-2 p-4">
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-7 w-16" />
-      <Skeleton className="h-4 w-full" />
-    </div>
-  ),
-}

@@ -10,7 +10,6 @@ export interface ErrorStateProps {
   onRetry?: () => void
   /** `compact` fits inside table bodies and small panels. */
   size?: 'compact' | 'default'
-  className?: string
 }
 
 /**
@@ -23,7 +22,6 @@ export function ErrorState({
   description,
   onRetry,
   size = 'default',
-  className,
 }: ErrorStateProps) {
   return (
     <div
@@ -31,7 +29,6 @@ export function ErrorState({
       className={cn(
         'flex flex-col items-center justify-center text-center',
         size === 'compact' ? 'gap-1 px-4 py-6' : 'gap-1.5 px-6 py-10',
-        className,
       )}
     >
       <p className={cn('font-medium text-breach-text', size === 'compact' ? 'text-sm' : 'text-base')}>

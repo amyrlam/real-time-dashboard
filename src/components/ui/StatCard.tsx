@@ -19,7 +19,6 @@ export interface StatCardProps {
   intent?: Intent
   /** Render a skeleton with the same silhouette while data loads. */
   loading?: boolean
-  className?: string
 }
 
 /**
@@ -33,15 +32,9 @@ export function StatCard({
   hint,
   intent,
   loading = false,
-  className,
 }: StatCardProps) {
   return (
-    <div
-      className={cn(
-        'flex min-w-0 flex-col gap-1 rounded-lg border border-line bg-surface px-4 py-3 shadow-raised',
-        className,
-      )}
-    >
+    <div className="flex min-w-0 flex-col gap-1 rounded-lg border border-line bg-surface px-4 py-3 shadow-raised">
       <span className="text-xs font-medium text-ink-secondary">{label}</span>
       {loading ? (
         <Skeleton className="my-1 h-7 w-20" />
