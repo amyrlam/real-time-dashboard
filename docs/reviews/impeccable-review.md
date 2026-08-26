@@ -24,7 +24,7 @@
 - **[P1]** Raw queue IDs in the agents table (`AgentsPanel.tsx` renders `a.queues.join(', ')`). Fix: map `queue_id → queue.name` in `domain.ts`.
 - **[P1]** The freshness live region ticks every second (`FreshnessIndicator` wraps the ticking timestamp in `role="status"`; for data aged 5–60s a screen reader hears it every second). Fix: state word only in the live region; timestamp as a sibling.
 - **[P2]** Stale is under-signaled: one 11px word changes; two-minute-old breach numbers look live. Fix: a quiet risk-tinted strip or dimmed panels, calmer than the error banner.
-- **[P2]** Sortable headers are invisible affordances (identical to unsortable until hover). Fix: persistent low-contrast sort glyph.
+- **[P2]** Sortable headers are invisible affordances (identical to unsortable until hover). Fix: persistent low-contrast sort glyph. *(Post-review, PR #6: sort headers gained a full-cell hover wash, pointer cursor, and inward focus ring — materially better feedback, but the affordance still appears only on hover, so the persistent-glyph half remains open.)*
 - **[P3]** "On break for 0s" at tick boundaries. Fix: floor `formatDuration` to "just now".
 
 **Persona highlights.** *Alex:* sparkline values tooltip-only; no queue→staff path. *Sam:* the two P1s; otherwise strong (`aria-sort`/`aria-expanded` verified live, sparkline `role="img"` labels excellent). *Riley:* the demo hint promises "a dropped feed errors after a few failed ticks", but dropping while paused never errors (failures only accrue on ticks); the replay loops 14:45→14:00 silently.
