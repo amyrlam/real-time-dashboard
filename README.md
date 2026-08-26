@@ -185,9 +185,11 @@ primitives are reusable and domain-free, the feature layer knows what an
 An ops manager's question at 9am is "is the floor healthy, and where do I
 intervene?" — so the page is ordered by intervention priority:
 
-1. **Summary row** — four headline numbers: SLA attainment, queues breaching,
-   tickets waiting, agents out of adherence. Counts that are themselves a state
-   (breaching > 0) are colored; plain metrics stay ink with a small delta chip.
+1. **Summary row** — five headline numbers: SLA attainment, queues breaching,
+   tickets waiting, agents out of adherence, and volume vs forecast (derived —
+   see [the sample data](#the-sample-data)). Counts that are themselves a
+   state (breaching > 0, volume past the quiet band) are colored; plain
+   metrics stay ink with a small delta chip.
 2. **Queues, worst first** — the centerpiece. Status badge, longest wait
    against target, the wait *trend* with the SLA target drawn as a threshold
    line (a number tells you where you are; the sparkline tells you where you're
@@ -451,7 +453,7 @@ Smaller observations from a props audit — known, not (yet) acted on:
 |---|---|
 | Unused API surface | `StatusBadge size="md"` (the default), `EmptyState size="default"`, and `ErrorState size="compact"` have no in-app call sites — fine for a system, worth knowing when reading coverage. |
 | `--color-focus` unused as a utility | The token is mapped into Tailwind but the focus ring comes from the raw `:focus-visible` rule; no utility class references it. |
-| `StatCard intent` is hue-only | Unlike `Duration`, the colored value gets no weight change. Both current uses pair the number with a label, so nothing is color-alone today — but the primitive doesn't enforce it. |
+| `StatCard intent` is hue-only | Unlike `Duration`, the colored value gets no weight change. All three current uses pair the number with a label, so nothing is color-alone today — but the primitive doesn't enforce it. |
 | Hand-rolled disconnect banner | `DashboardPage` builds the reconnect banner from raw breach tokens instead of composing `ErrorState` — candidate for a `Banner` primitive if a second one appears. |
 | Staffing cell colors status ad hoc | `QueuesPanel`'s "0 free" sub-label turns amber (`text-risk-text` + `font-medium`) when a queue has no free agents — the one status color applied outside `StatusBadge`. The caveat: unlike the badge, this cue is carried by color and weight only, with no mark. The *fact* survives without color (the text literally says "0 free"), but the *urgency* doesn't. Ways to say it with more than color, in ascending weight: a leading intent-colored dot (the badge's own idiom, ~6px), a text prefix ("⚠ 0 free" or "0 free — none available" for screen readers), or an `intent`-typed `StatusText` primitive that standardizes dot + color + weight for inline text. A full badge is too heavy for an 11px sub-label, which is why the cell doesn't use one. |
 | `SimPanel` bypasses the system | Demo-only control panel, hand-rolled; a real deployment ships without it. |
