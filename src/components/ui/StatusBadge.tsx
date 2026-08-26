@@ -11,20 +11,20 @@ export interface StatusBadgeProps {
   size?: 'sm' | 'md'
   /** Hide the leading dot (e.g. when a count or icon precedes the label). */
   dot?: boolean
-  className?: string
 }
 
 /**
  * A small tinted chip that names a state: "Breached", "On break", "Live".
- * The single source of status color in the system — anything that needs to
- * label a state renders one of these rather than coloring text ad hoc.
+ * The home of status color in the system — anything that needs to label a
+ * state renders one of these rather than coloring text ad hoc. One documented
+ * exception: QueuesPanel's 11px "0 free" sub-label, where a chip would be too
+ * heavy (see the README's API review notes).
  */
 export function StatusBadge({
   intent,
   children,
   size = 'md',
   dot = true,
-  className,
 }: StatusBadgeProps) {
   const c = INTENT_CLASSES[intent]
   return (
@@ -35,7 +35,6 @@ export function StatusBadge({
         c.surface,
         c.border,
         size === 'sm' ? 'px-1.5 py-px text-2xs' : 'px-2 py-0.5 text-xs',
-        className,
       )}
     >
       {dot && (

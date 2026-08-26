@@ -1,20 +1,33 @@
 import { Delta } from '../../components/ui/Delta'
 import { StatCard } from '../../components/ui/StatCard'
-import type { SummarySnapshot } from '../../lib/types'
+import { volumeVsForecast } from '../../lib/domain'
+import type { QueueSnapshot, SummarySnapshot } from '../../lib/types'
 
 export interface SummaryRowProps {
   summary: SummarySnapshot | null
   /** Previous tick's summary, for deltas. Deltas hide when absent. */
   previous?: SummarySnapshot | null
+  /**
+   * Queue snapshots for the derived volume-vs-forecast headline (the fixture
+   * summary carries no aggregate). The card shows "—" when absent.
+   */
+  queues?: QueueSnapshot[] | null
   loading?: boolean
 }
 
 /**
  * The headline numbers an ops manager scans first: is SLA holding, how many
- * queues are on fire, how much work is queued, and who's off plan.
+ * queues are on fire, how much work is queued, who's off plan, and whether
+ * volume is running hot against forecast.
  */
-export function SummaryRow({ summary, previous, loading }: SummaryRowProps) {
+export function SummaryRow({
+  summary,
+  previous,
+  queues,
+  loading,
+}: SummaryRowProps) {
   const s = summary
+  const volume = queues && queues.length > 0 ? volumeVsForecast(queues) : null
   const attainmentDelta =
     s && previous ? s.sla_attainment_pct - previous.sla_attainment_pct : null
   const waitingDelta =
@@ -23,7 +36,7 @@ export function SummaryRow({ summary, previous, loading }: SummaryRowProps) {
       : null
 
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
       <StatCard
         label="SLA attainment"
         hint="trailing 15m"
@@ -73,6 +86,21 @@ export function SummaryRow({ summary, previous, loading }: SummaryRowProps) {
         value={s ? s.agents_out_of_adherence : '—'}
         intent={s && s.agents_out_of_adherence > 0 ? 'risk' : 'healthy'}
         hint={s ? `${s.agents_online} of ${s.agents_total} online` : undefined}
+      />
+      <StatCard
+        label="Volume vs forecast"
+        loading={loading}
+        value={
+          volume
+            ? `${volume.pct > 0 ? '+' : volume.pct < 0 ? '−' : ''}${Math.abs(volume.pct)}%`
+            : '—'
+        }
+        intent={volume && volume.pct >= 10 ? 'risk' : undefined}
+        hint={
+          volume
+            ? `${volume.actual} actual · ${volume.forecast} forecast, 15m`
+            : undefined
+        }
       />
     </div>
   )

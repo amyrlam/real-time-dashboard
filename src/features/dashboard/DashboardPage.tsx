@@ -93,6 +93,7 @@ export function DashboardPage({ feedOptions }: DashboardPageProps = {}) {
           <SummaryRow
             summary={frame?.summary ?? null}
             previous={feed.previousFrame?.summary ?? null}
+            queues={frame?.queues ?? null}
             loading={loading}
           />
           <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
