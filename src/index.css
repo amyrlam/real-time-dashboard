@@ -100,3 +100,36 @@
     }
   }
 }
+
+@layer utilities {
+  /*
+   * Scroll affordance for horizontally scrollable tables: an inner shadow at
+   * whichever edge has more content, fading out when scrolled to that end.
+   * Pure CSS (Lea Verou's scrolling-shadows technique) — the "cover" layers
+   * scroll with the content (background-attachment: local) and slide over
+   * the fixed shadow layers at the ends. The shadow paints behind the table,
+   * so it hides under opaque stretches (the sticky header, tinted row
+   * washes) and shows between rows — a hint, not a scrollbar replacement.
+   */
+  .scroll-fade-x {
+    background:
+      linear-gradient(to right, var(--t-bg-surface) 40%, transparent) left /
+        3rem 100%,
+      linear-gradient(to left, var(--t-bg-surface) 40%, transparent) right /
+        3rem 100%,
+      linear-gradient(
+          to right,
+          color-mix(in srgb, var(--t-ink) 14%, transparent),
+          transparent
+        )
+        left / 0.875rem 100%,
+      linear-gradient(
+          to left,
+          color-mix(in srgb, var(--t-ink) 14%, transparent),
+          transparent
+        )
+        right / 0.875rem 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
+  }
+}
