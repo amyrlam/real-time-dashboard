@@ -104,9 +104,12 @@ const meta = {
           '  a `hover:text-ink` lift; the wash is what keeps hover visible on',
           '  an already-sorted (already full-ink) header.',
           '- **Focus** is one global `:focus-visible` rule (`src/index.css`):',
-          '  a 2px `--t-focus-ring` outline, offset 2px. Components never own',
-          '  focus styles, so the ring is identical everywhere — these',
-          '  canvases force it on a few element kinds only to prove the rule.',
+          '  a 2px `--t-focus-ring` outline, offset 2px. Components never',
+          '  restyle the ring — the one permitted adjustment is *offset*:',
+          '  full-bleed targets that sit flush against clipping edges (sort',
+          '  headers inside the table scroller, the SimPanel header against',
+          '  its panel corners) flip the offset negative so the same ring',
+          '  draws inward instead of being cut off.',
           '',
           'The hover and focus columns are *forced* via the pseudo-states',
           'addon; nothing here is focused for real. One deliberate exception',
@@ -182,7 +185,7 @@ export const Overview: Story = {
         <div className="max-w-56 rounded-lg border border-line bg-surface">
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold text-ink-secondary hover:bg-hover"
+            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold text-ink-secondary hover:bg-hover focus-visible:-outline-offset-2"
           >
             Demo controls
             <span aria-hidden className="text-ink-muted">

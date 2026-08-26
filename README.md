@@ -305,6 +305,9 @@ executable, so most of this is enforced in CI rather than asserted here.
 **Keyboard**
 - One global `:focus-visible` rule in `src/index.css`, so every focusable
   element gets the same visible ring; the ring colour itself clears 3:1.
+  Full-bleed targets (sort headers, the SimPanel header) flip the ring's
+  offset negative so it draws inward — the adjacent scroll container or
+  rounded panel would otherwise clip it.
 - Every interactive element is a native `<button>` / `<input>` — no
   `div`-with-`onClick`, so activation, focus, and Enter/Space come from the
   platform rather than from re-implemented handlers.

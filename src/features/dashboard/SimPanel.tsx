@@ -23,7 +23,9 @@ export function SimPanel({ feed }: { feed: DashboardFeed }) {
         <Collapsible.Trigger
           // Rounding tracks the panel's corners: top always, bottom only
           // while collapsed, so the hover wash never pokes past the border.
-          className="flex w-full items-center justify-between rounded-t-lg px-3 py-2 text-xs font-semibold text-ink-secondary hover:bg-hover not-data-[panel-open]:rounded-b-lg"
+          // Full-bleed target, so the focus ring draws inward (see the sort
+          // buttons in DataTable) rather than poking past those corners.
+          className="flex w-full items-center justify-between rounded-t-lg px-3 py-2 text-xs font-semibold text-ink-secondary hover:bg-hover not-data-[panel-open]:rounded-b-lg focus-visible:-outline-offset-2"
         >
           Demo controls
           <span aria-hidden className="text-ink-muted">
