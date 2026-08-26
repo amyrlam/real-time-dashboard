@@ -501,6 +501,15 @@ table), and quieting the per-second `role="status"` tick. (Their fourth item —
 a headline presence for "volume vs forecast" — is closed: the summary row now
 derives one.) Beyond fixing what's already known, the things I'd *add*:
 
+- **User research, and seeing Assembled's product in action** — first, before
+  anything below. Every product call here (worst-first, seconds over target,
+  adherence carrying the alarm, what got left out) was reasoned from the brief
+  and the fixture alone. The calls are defended above, but they're hypotheses:
+  watching a real ops manager run a morning — what they glance at, what they
+  ignore, when they actually move an agent — would confirm or kill them
+  cheaply. And a demo of the real Assembled product would show the conventions
+  its users already know, worth matching where they exist: on a tool like
+  this, earned familiarity beats novelty.
 - **StyleX exploration**: the semantic-token layer (CSS variables) could be
   ported to StyleX `defineVars` for typed, compiler-enforced tokens — a
   component could constrain exactly which style properties consumers are
