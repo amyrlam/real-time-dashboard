@@ -43,7 +43,6 @@ export interface DataTableProps<TData> {
   loading?: boolean
   /** Number of skeleton rows while loading. */
   loadingRows?: number
-  className?: string
 }
 
 /**
@@ -62,7 +61,6 @@ export function DataTable<TData>({
   empty,
   loading = false,
   loadingRows = 5,
-  className,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>(initialSorting)
 
@@ -80,7 +78,7 @@ export function DataTable<TData>({
   const colCount = leafColumns.length
 
   return (
-    <div className={cn('scroll-fade-x overflow-x-auto', className)}>
+    <div className="scroll-fade-x overflow-x-auto">
       <table className="w-full border-collapse text-sm" aria-label={ariaLabel}>
         <thead className="sticky top-0 z-10 bg-surface">
           {table.getHeaderGroups().map((headerGroup) => (

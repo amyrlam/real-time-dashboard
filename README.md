@@ -238,8 +238,9 @@ API principles, applied consistently:
 - **`className` follows a line, not a habit.** Layout primitives (`Panel`,
   `StatCard`, `EmptyState`, `ErrorState`, `Skeleton`) accept `className` for
   grid placement and sizing; data-semantic primitives (`Delta`, `Duration`,
-  `StatusBadge`, `Sparkline`, `FreshnessIndicator`) don't — their whole value
-  is rendering the same way everywhere.
+  `StatusBadge`, `Sparkline`, `FreshnessIndicator`, and `DataTable` — which
+  owns its layout and always lives inside a `Panel`) don't — their whole
+  value is rendering the same way everywhere.
 - **Renames are cheap early; ambiguity is expensive forever.** `Delta`'s
   polarity prop began as `positiveIsGood?: boolean` and was renamed to
   `polarity: 'higher-is-better' | 'lower-is-better'` — "positive" read as the
